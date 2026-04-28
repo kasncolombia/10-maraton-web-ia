@@ -1,0 +1,23 @@
+ejecuta node en la sesion actual de antigravity
+comando:
+
+Set-ExecutionPolicy RemoteSigned -Force
+$env:Path = "F:\YOUTUBE\Antigravity\nodejs;" + $env:Path
+node --version
+
+
+
+
+ejecuta python en la sesion actual de antigravity
+comando:
+
+$env:Path = "D:\;D:\Scripts;" + $env:Path
+python --version
+
+github 
+$env:Path = "F:\PortableGit\bin;F:\PortableGit\cmd;" + $env:Path
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
+
+$env:Path = "F:\PortableGit\bin;F:\PortableGit\cmd;F:\nodejs;F:\python;" + $env:Path
+
+git config --global --add safe.directory D:/YOUTUBE/Antigravity/OpenClaw-Academia-Interactividad/.tmp/outputs/openclaw-docs
