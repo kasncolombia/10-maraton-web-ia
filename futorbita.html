@@ -131,6 +131,30 @@
         .swiper-button-next, .swiper-button-prev {
             color: #00ffa3 !important;
         }
+
+        /* Attention-grabbing animation for Telegram */
+        @keyframes float-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+        .animate-float-bounce {
+            animation: float-bounce 3s ease-in-out infinite;
+        }
+
+        /* Radar Animation */
+        @keyframes radar {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .radar-effect::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: #0088cc;
+            z-index: -1;
+            animation: radar 2s ease-out infinite;
+        }
     </style>
 </head>
 <body class="font-sans antialiased custom-scrollbar">
@@ -150,7 +174,7 @@
                     <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
                 </button>
-                <a href="index.html#precios" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:bg-primary-dark transition-all">
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:bg-primary-dark transition-all">
                     Obtener el Código
                 </a>
             </div>
@@ -410,6 +434,31 @@
             </div>
         </section>
 
+        <!-- Exclusive Access Section -->
+        <section class="max-w-4xl mx-auto px-6 mb-40 text-center">
+            <div class="relative p-12 rounded-3xl overflow-hidden border border-primary/20 bg-black shadow-[0_0_100px_rgba(0,255,163,0.1)]">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50"></div>
+                
+                <div class="relative z-10">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20">
+                        <i data-lucide="lock" class="text-primary w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4 text-white">
+                        🔒 Acceso exclusivo por <span class="text-primary flex inline-flex items-center gap-2">
+                            Telegram <i data-lucide="send" class="w-8 h-8"></i>
+                        </span>
+                    </h2>
+                    <p class="text-gray-300 text-lg mb-8">
+                        Escribe <span class="text-white font-bold">“QUIERO PACK”</span> para entrar al grupo privado.
+                    </p>
+                    <a href="https://t.me/+e_23a6AooN44NGE5" target="_blank" class="inline-flex items-center gap-3 bg-primary text-black px-12 py-6 rounded-xl font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
+                        <i data-lucide="send" class="w-6 h-6"></i>
+                        Entrar al Grupo Oficial
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- CTA Section -->
         <section class="max-w-4xl mx-auto px-6 py-32 text-center">
             <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-8">¿Listo para construir el futuro del fútbol?</h2>
@@ -417,7 +466,7 @@
                 Este es solo uno de los 10 nichos incluidos. Obtén el stack completo, los modelos de Rails y el frontend listo para monetizar.
             </p>
             <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <a href="index.html#precios" class="bg-primary text-black px-12 py-6 rounded-sm font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-12 py-6 rounded-sm font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
                     Acceder ahora por $97
                 </a>
                 <a href="index.html" class="border border-surface-border px-12 py-6 rounded-sm font-black text-xl uppercase tracking-tighter hover:bg-black/5 dark:hover:bg-white/5 transition-all">
@@ -433,11 +482,31 @@
             <div class="text-primary italic font-black text-sm tracking-tighter uppercase">
                 FUTBOL ÓRBITA × 10 PLATAFORMAS CON IA
             </div>
-            <div class="text-[10px] font-medium text-gray-600 uppercase tracking-widest">
-                © 2024 VIBE CODING MARATHON.
+
+            <div class="flex flex-col items-center md:items-end gap-4">
+                <div class="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    <a href="https://t.me/IAcomunIA_Tienda_Web" target="_blank" class="hover:text-primary transition-colors flex items-center gap-2">
+                        <i data-lucide="send" class="w-3 h-3"></i> Telegram
+                    </a>
+                    <a href="#" class="hover:text-white transition-colors">Términos</a>
+                    <a href="#" class="hover:text-white transition-colors">Privacidad</a>
+                    <a href="#" class="hover:text-white transition-colors">Soporte</a>
+                </div>
+                <div class="text-[10px] font-medium text-gray-600 uppercase tracking-widest">
+                    © 2024 VIBE CODING MARATHON.
+                </div>
             </div>
         </div>
     </footer>
+
+    <!-- Floating Telegram Button -->
+    <a href="https://t.me/IAcomunIA_Tienda_Web" target="_blank" 
+       class="fixed bottom-8 right-8 z-[100] bg-[#0088cc] text-white p-4 rounded-full shadow-[0_0_20px_rgba(0,136,204,0.3)] hover:scale-110 hover:shadow-[0_0_30px_rgba(0,136,204,0.5)] transition-all group animate-float-bounce radar-effect">
+        <i data-lucide="send" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
+        <span class="absolute right-full mr-4 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Únete al Telegram
+        </span>
+    </a>
 
     <script>
         lucide.createIcons();
