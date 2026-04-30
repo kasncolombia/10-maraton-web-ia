@@ -18,13 +18,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
-        // Check for saved theme or default to dark
-        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-            document.documentElement.classList.remove('dark');
-        } else {
-            document.documentElement.classList.add('dark');
-        }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -34,27 +27,9 @@
                             DEFAULT: '#00ffa3',
                             dark: '#00d689',
                         },
-                        // These will now respect the theme class via CSS variables
-                        surface: 'var(--card-bg)',
-                        'surface-border': 'var(--border-color)',
-                        'body-bg': 'var(--bg-color)',
                     },
                     fontFamily: {
                         sans: ['Outfit', 'sans-serif'],
-                    },
-                    animation: {
-                        'marquee': 'marquee 25s linear infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        marquee: {
-                            '0%': { transform: 'translateX(0)' },
-                            '100%': { transform: 'translateX(-50%)' },
-                        },
-                        glow: {
-                            'from': { 'box-shadow': '0 0 10px #00ffa344' },
-                            'to': { 'box-shadow': '0 0 20px #00ffa388' },
-                        }
                     }
                 }
             }
@@ -68,8 +43,10 @@
             --card-bg: #f9f9f9;
             --border-color: rgba(0, 0, 0, 0.08);
             --grid-color: rgba(0, 0, 0, 0.03);
-            --scroll-track: #f0f0f0;
-            --scroll-thumb: #d0d0d0;
+            --scroll-track: #f5f5f5;
+            --scroll-thumb: #e5e5e5;
+            --neon: #00ffa3;
+            --neon-muted: rgba(0, 255, 163, 0.1);
         }
 
         .dark {
@@ -80,6 +57,7 @@
             --grid-color: rgba(255, 255, 255, 0.02);
             --scroll-track: #050505;
             --scroll-thumb: #1f1f1f;
+            --neon-muted: rgba(0, 255, 163, 0.05);
         }
 
         body {
@@ -90,7 +68,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Ambient Background */
         body::before {
             content: '';
             position: fixed;
@@ -99,8 +76,8 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 20%, rgba(0, 255, 163, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(0, 255, 163, 0.05) 0%, transparent 40%);
+                radial-gradient(circle at 20% 20%, var(--neon-muted) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, var(--neon-muted) 0%, transparent 40%);
             z-index: -1;
             pointer-events: none;
         }
@@ -112,24 +89,10 @@
             width: 100%;
             height: 100%;
             background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
-                              linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+                               linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 50px 50px;
             z-index: -2;
             pointer-events: none;
-        }
-
-        .neon-border {
-            position: relative;
-        }
-
-        .neon-border::after {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            background: linear-gradient(45deg, #00ffa3, transparent, #00ffa3);
-            z-index: -1;
-            border-radius: inherit;
-            opacity: 0.3;
         }
 
         .glass-card {
@@ -138,14 +101,11 @@
             border: 1px solid var(--border-color);
         }
 
-        .gradient-text {
-            background: linear-gradient(to right, var(--text-color), #00ffa3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .glow-hover:hover {
-            box-shadow: 0 0 30px rgba(0, 255, 163, 0.2);
+        .diagonal-separator {
+            background: linear-gradient(135deg, transparent 49.5%, var(--neon) 49.5%, var(--neon) 50.5%, transparent 50.5%);
+            height: 100px;
+            width: 100%;
+            opacity: 0.1;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -159,10 +119,9 @@
             border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #00ffa3;
+            background: var(--neon);
         }
 
-        /* Attention-grabbing animation for Telegram */
         @keyframes float-bounce {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-10px) scale(1.05); }
@@ -171,7 +130,6 @@
             animation: float-bounce 3s ease-in-out infinite;
         }
 
-        /* Radar Animation */
         @keyframes radar {
             0% { transform: scale(1); opacity: 0.5; }
             100% { transform: scale(2.5); opacity: 0; }
@@ -186,7 +144,18 @@
             animation: radar 2s ease-out infinite;
         }
 
-        /* Transitions for theme toggle */
+        .sticky-bar {
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sticky-bar.visible {
+            transform: translateY(0);
+        }
+
+        .neon-accent { color: var(--neon); }
+        .neon-bg { background-color: var(--neon); color: black; }
+        .neon-border { border-color: var(--neon); }
+
         * {
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
@@ -197,27 +166,25 @@
     <div class="grid-bg"></div>
 
     <!-- Header / Navbar -->
-    <header class="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md">
+    <header class="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="text-primary italic font-extrabold text-xl tracking-tighter">10 PLATAFORMAS CON IA</span>
+                <span class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">10 Plataformas con IA</span>
             </div>
 
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500 dark:text-gray-400">
                 <a href="#plataformas" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Plataformas</a>
-                <a href="#stack" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Stack</a>
+                <a href="#comparacion" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Diferencial</a>
                 <a href="#precios" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Precios</a>
-                <a href="#faq" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">FAQ</a>
             </div>
 
             <div class="flex items-center gap-4">
-                <!-- Theme Toggle Button -->
                 <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500 dark:text-gray-400">
                     <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
                 </button>
 
-                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:bg-primary-dark transition-all glow-hover">
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="neon-bg px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,255,163,0.3)]">
                     Acceso de por vida
                 </a>
             </div>
@@ -226,275 +193,244 @@
 
     <main class="pt-32">
         <!-- Hero Section -->
-        <section class="max-w-5xl mx-auto px-6 text-center mb-24">
+        <section class="max-w-5xl mx-auto px-6 text-center mb-16">
             <div class="inline-block px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-bold uppercase tracking-[0.2em] mb-8 animate-pulse">
-                Oportunidad Limitada: Vibe Coding Marathon
+                ¿Cuántas apps has empezado y nunca terminado?
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-8 leading-[1.1]">
-                CREA <span class="text-primary">10 PLATAFORMAS</span> LISTAS PARA MONETIZAR CON IA EN 1 MARATÓN DE VIBE CODING
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[1.0]">
+                CREA <span class="text-primary">10 PLATAFORMAS</span> <br>
+                LISTAS PARA FACTURAR
             </h1>
 
             <p class="text-gray-600 dark:text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light">
-                Domina el stack del futuro: <span class="text-black dark:text-white font-semibold">Rails + Antigravity + IA</span>. Deja de ser un espectador y construye activos digitales reales que facturan mientras duermes.
+                Deja de ser un espectador. Domina <span class="text-gray-900 dark:text-white font-semibold">Rails + Antigravity + IA</span> y construye activos digitales reales que funcionan mientras duermes.
             </p>
 
-            <!-- Feature Badges -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 max-w-4xl mx-auto">
-                <div class="bg-gray-50 dark:bg-dark-card border border-black/5 dark:border-dark-border p-4 rounded-lg flex items-center gap-3 transition-transform hover:scale-105">
-                    <i data-lucide="zap" class="text-primary w-5 h-5"></i>
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300">Vibe Coding</span>
+            <!-- Proof Bar -->
+            <div class="flex flex-wrap justify-center items-center gap-6 md:gap-12 py-6 border-y border-black/5 dark:border-white/5 mb-16 opacity-80">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-primary rounded-full"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">2 Apps Live Hoy</span>
                 </div>
-                <div class="bg-gray-50 dark:bg-dark-card border border-black/5 dark:border-dark-border p-4 rounded-lg flex items-center gap-3 transition-transform hover:scale-105">
-                    <i data-lucide="bot" class="text-primary w-5 h-5"></i>
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300">Agentes</span>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-primary rounded-full"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">147 Builders Activos</span>
                 </div>
-                <div class="bg-gray-50 dark:bg-dark-card border border-black/5 dark:border-dark-border p-4 rounded-lg flex items-center gap-3 transition-transform hover:scale-105">
-                    <i data-lucide="rocket" class="text-primary w-5 h-5"></i>
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300">Apps Reales</span>
-                </div>
-                <div class="bg-gray-50 dark:bg-dark-card border border-black/5 dark:border-dark-border p-4 rounded-lg flex items-center gap-3 transition-transform hover:scale-105">
-                    <i data-lucide="dollar-sign" class="text-primary w-5 h-5"></i>
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300">Monetiza</span>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-primary rounded-full"></span>
+                    <span class="text-[10px] font-black uppercase tracking-widest">Acceso de por vida</span>
                 </div>
             </div>
 
             <div class="space-y-6">
-                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="inline-block bg-primary text-black px-12 py-6 rounded-sm font-black text-2xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
-                    Acceso Anticipado
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="inline-block bg-primary text-black px-12 py-6 rounded-sm font-black text-2xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.4)]">
+                    🔥 Obtener acceso — $97 USD
                 </a>
-                <p class="text-gray-500 dark:text-gray-500 text-xs font-medium">Únete a los +500 desarrolladores ya construyendo.</p>
-            </div>
-        </section>
-
-        <!-- Marquee Stats -->
-        <div class="border-y border-black/5 dark:border-white/5 bg-gray-50 dark:bg-[#080808] py-4 overflow-hidden mb-32">
-            <div class="flex animate-marquee whitespace-nowrap gap-12 items-center">
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> CRYPTO AGENT: DEPLOYED
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> REVENUE SHARED: $12K+
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> NEXT DROP: ROBOTICS AI
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> VIBE CODING SESSIONS: 24/7
-                </div>
-                <!-- Duplicate for seamless loop -->
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> CRYPTO AGENT: DEPLOYED
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> REVENUE SHARED: $12K+
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> NEXT DROP: ROBOTICS AI
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-500">
-                    <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> VIBE CODING SESSIONS: 24/7
-                </div>
-            </div>
-        </div>
-
-        <!-- Showcase Section -->
-        <section class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center mb-40">
-            <div>
-                <h2 class="text-4xl md:text-5xl font-black tracking-tighter mb-4 leading-tight">
-                    MIRA LO QUE <br>
-                    <span class="text-primary uppercase">estamos construyendo</span>
-                </h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-12 max-w-md">No son simples tutoriales. Son productos SaaS completos, escalables y listos para recibir usuarios reales desde el día uno.</p>
-                
-                <div class="space-y-4">
-                    <a href="futorbita.html" class="group cursor-pointer p-6 rounded-xl bg-primary/5 border-l-4 border-primary transition-all block">
-                        <div class="flex items-start gap-4">
-                            <span class="text-2xl font-black text-primary/40">01.</span>
-                            <div>
-                                <h3 class="text-xl font-bold dark:text-white mb-1">FOOTBALL AI</h3>
-                                <p class="text-sm text-gray-500">Predicciones en tiempo real y análisis táctico profundo.</p>
-                            </div>
-                        </div>
-                    </a>
-                    <div class="group cursor-pointer p-6 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 border-l-4 border-transparent transition-all">
-                        <div class="flex items-start gap-4">
-                            <span class="text-2xl font-black text-gray-300 dark:text-gray-700">02.</span>
-                            <div>
-                                <h3 class="text-xl font-bold text-gray-500 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">CRYPTO SENTIMENT</h3>
-                                <p class="text-sm text-gray-400 dark:text-gray-600">Agentes que analizan el mercado 24/7 sin emociones.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="relative">
-                <div class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"></div>
-                <div class="relative aspect-video rounded-2xl overflow-hidden border border-surface-border bg-surface shadow-2xl">
-                    <div class="absolute top-4 right-4 z-10">
-                        <span class="bg-primary text-black text-[10px] font-black px-3 py-1 rounded-sm uppercase tracking-widest">Live Preview</span>
-                    </div>
-                    <img src="futorbita/vista-dark-futorbita.png" alt="Futbol Orbita Preview" class="w-full h-full object-cover">
-                </div>
+                <p class="text-gray-500 dark:text-gray-500 text-xs font-medium uppercase tracking-widest">Inversión única. Código fuente incluido.</p>
             </div>
         </section>
 
         <!-- Niches Grid -->
         <section id="plataformas" class="max-w-7xl mx-auto px-6 mb-40">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-                <div>
-                    <h2 class="text-4xl md:text-5xl font-black tracking-tighter mb-4">
-                        10 NICHOS <span class="text-yellow-400">GANADORES</span>
-                    </h2>
-                    <p class="text-gray-600 dark:text-gray-400 max-w-xl">Dominaremos cada sector con aplicaciones potenciadas por agentes de IA.</p>
-                </div>
-                <div class="flex gap-4 text-[10px] font-bold uppercase tracking-widest">
-                    <span class="flex items-center gap-2 text-primary bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
-                        ✅ 1-2 funcionales
-                    </span>
-                    <span class="flex items-center gap-2 text-gray-500 dark:text-gray-500 bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-full border border-black/5 dark:border-white/5">
-                        🚧 el resto en construcción
-                    </span>
-                </div>
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4 uppercase">
+                    10 NICHOS <span class="text-yellow-400">GANADORES</span>
+                </h2>
+                <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">Dominaremos cada sector con aplicaciones potenciadas por agentes de IA.</p>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <!-- Niche Card 1 -->
-                <a href="futorbita.html" class="bg-surface border border-primary/30 p-8 rounded-sm hover:border-primary transition-all group relative overflow-hidden block">
-                    <div class="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <i data-lucide="activity" class="w-12 h-12"></i>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-24">
+                <!-- Niche Card 1: Football (Advanced Showcase) -->
+                <a href="futorbita.html" class="glass-card p-6 rounded-xl border-primary/50 bg-primary/5 hover:border-primary transition-all group relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition-all"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <i data-lucide="football" class="text-primary w-10 h-10"></i>
+                        <span class="text-[8px] bg-primary text-black px-2 py-0.5 rounded-full font-black uppercase">ADVANCED</span>
                     </div>
-                    <i data-lucide="football" class="text-primary w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold mb-1">FOOTBALL</h4>
-                    <div class="flex items-center justify-between">
-                        <p class="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Proceso Avanzado</p>
-                        <i data-lucide="external-link" class="w-3 h-3 text-primary opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    <h4 class="text-lg font-black mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">FOOTBALL PRO</h4>
+                    <p class="text-[9px] text-primary/80 dark:text-primary/80 uppercase font-bold tracking-widest mb-4">Scoreboard + Social + SEO</p>
+                    <div class="flex gap-1">
+                        <div class="w-1 h-1 bg-primary rounded-full"></div>
+                        <div class="w-1 h-1 bg-primary rounded-full"></div>
+                        <div class="w-1 h-1 bg-primary rounded-full"></div>
                     </div>
                 </a>
-                <!-- Niche Card 2 -->
-                <div class="bg-surface border border-primary/30 p-8 rounded-sm hover:border-primary transition-all group relative overflow-hidden">
-                    <i data-lucide="bitcoin" class="text-primary w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold mb-1">CRYPTO</h4>
-                    <p class="text-[10px] text-primary/60 font-bold uppercase tracking-widest">Proceso Avanzado</p>
+                
+                <!-- Niche Card 2: Crypto (Advanced) -->
+                <div class="glass-card p-6 rounded-xl border-primary/50 bg-primary/5 hover:border-primary transition-all group relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-6">
+                        <i data-lucide="bitcoin" class="text-primary w-10 h-10"></i>
+                        <span class="text-[8px] bg-primary text-black px-2 py-0.5 rounded-full font-black uppercase">ADVANCED</span>
+                    </div>
+                    <h4 class="text-lg font-black mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">CRYPTO AGENT</h4>
+                    <p class="text-[9px] text-primary/80 dark:text-primary/80 uppercase font-bold tracking-widest">Sentiment Analysis</p>
                 </div>
-                <!-- Niche Card 3 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="cpu" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">IA TOOLS</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 3: Tarot (New) -->
+                <div class="glass-card p-6 rounded-xl hover:border-primary transition-all group relative">
+                    <div class="flex justify-between items-start mb-6">
+                        <i data-lucide="sparkles" class="text-primary w-8 h-8"></i>
+                        <span class="text-[8px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold uppercase">NEW</span>
+                    </div>
+                    <h4 class="text-sm font-bold mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">TAROT IA</h4>
+                    <p class="text-[9px] text-gray-500 dark:text-gray-500 uppercase font-bold tracking-widest">Flutter App</p>
                 </div>
-                <!-- Niche Card 4 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="globe" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">TOURISM</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 4: Fitness (New) -->
+                <div class="glass-card p-6 rounded-xl hover:border-primary transition-all group relative">
+                    <div class="flex justify-between items-start mb-6">
+                        <i data-lucide="dumbbell" class="text-primary w-8 h-8"></i>
+                        <span class="text-[8px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold uppercase">NEW</span>
+                    </div>
+                    <h4 class="text-sm font-bold mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">FITNESS COACH</h4>
+                    <p class="text-[9px] text-gray-500 dark:text-gray-500 uppercase font-bold tracking-widest">Flutter App</p>
                 </div>
-                <!-- Niche Card 5 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="utensils" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">GASTRO</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 5: IA Tools -->
+                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
+                    <i data-lucide="cpu" class="text-gray-500 w-8 h-8 mb-6"></i>
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">IA TOOLS</h4>
+                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Workflows</p>
                 </div>
-                <!-- Niche Card 6 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="smartphone" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">GADGETS</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 6: Tourism -->
+                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
+                    <i data-lucide="globe" class="text-gray-500 w-8 h-8 mb-6"></i>
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">TRAVEL IA</h4>
+                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Planner</p>
                 </div>
-                <!-- Niche Card 7 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="church" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">RELIGION</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 7: Gastro -->
+                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
+                    <i data-lucide="utensils" class="text-gray-500 w-8 h-8 mb-6"></i>
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">GASTRO AI</h4>
+                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Discovery</p>
                 </div>
-                <!-- Niche Card 8 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="clapperboard" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">ANIME</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 8: Gadgets -->
+                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
+                    <i data-lucide="smartphone" class="text-gray-500 w-8 h-8 mb-6"></i>
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">TECH REVIEWS</h4>
+                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Automation</p>
                 </div>
-                <!-- Niche Card 9 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="car" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">MOTORS</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 9: Religion -->
+                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
+                    <i data-lucide="church" class="text-gray-500 w-8 h-8 mb-6"></i>
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">SPIRIT IA</h4>
+                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Community</p>
                 </div>
-                <!-- Niche Card 10 -->
-                <div class="bg-surface border border-surface-border p-8 rounded-sm hover:border-primary transition-all group">
-                    <i data-lucide="toy-brick" class="text-gray-400 dark:text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-lg font-bold text-gray-500 dark:text-gray-400 mb-1">ROBOTICS</h4>
-                    <p class="text-[10px] text-gray-400 dark:text-gray-600 font-bold uppercase tracking-widest">Próximamente</p>
+
+                <!-- Niche Card 10: Anime -->
+                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
+                    <i data-lucide="clapperboard" class="text-gray-500 w-8 h-8 mb-6"></i>
+                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">ANIME TRACK</h4>
+                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Database</p>
                 </div>
             </div>
-        </section>
 
-        <!-- Exclusive Access Section -->
-        <section class="max-w-4xl mx-auto px-6 mb-40 text-center">
-            <div class="relative p-12 rounded-3xl overflow-hidden border border-primary/20 bg-black shadow-[0_0_100px_rgba(0,255,163,0.1)]">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50"></div>
+            <!-- New Platform Demo Showcase (Inspired by Futorbita layout) -->
+            <div class="relative mt-32">
+                <!-- Neon Aura -->
+                <div class="absolute inset-0 bg-[#00ffa3]/5 blur-[120px] -z-10 rounded-full"></div>
                 
-                <div class="relative z-10">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20">
-                        <i data-lucide="lock" class="text-primary w-8 h-8"></i>
+                <div class="text-center mb-16">
+                    <h3 class="text-2xl md:text-4xl font-black tracking-tighter uppercase mb-4">Avance Real de las <span class="text-primary">Plataformas</span></h3>
+                    <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Mira cómo estamos construyendo el futuro</p>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8 items-start">
+                    <!-- Left Roadmap (The 10 slots) -->
+                    <div class="lg:col-span-4 space-y-4">
+                        <div class="glass-card p-6 rounded-2xl border-primary/30 bg-primary/5">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-[10px] font-black text-primary uppercase tracking-widest">01 · Football Pro</span>
+                                <span class="text-[10px] bg-primary text-black px-2 py-0.5 rounded-full font-black">ACTIVA</span>
+                            </div>
+                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">Plataforma avanzada con resultados en tiempo real y agentes de noticias SEO.</p>
+                            <div class="w-full bg-black/40 h-1 rounded-full overflow-hidden">
+                                <div class="bg-primary h-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Placeholders for others (Hidden for now to avoid empty space) 
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="aspect-square glass-card rounded-xl flex items-center justify-center border-dashed border-white/5 opacity-30 hover:opacity-100 transition-opacity group">
+                                <span class="text-[10px] font-bold text-gray-500 group-hover:text-primary transition-colors">02</span>
+                            </div>
+                            ... (rest of the placeholders)
+                        </div>
+                        -->
                     </div>
-                    <h2 class="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4 text-white">
-                        🔒 Acceso exclusivo por <span class="text-primary flex inline-flex items-center gap-2">
-                            Telegram <i data-lucide="send" class="w-8 h-8"></i>
-                        </span>
-                    </h2>
-                    <p class="text-gray-300 text-lg mb-8">
-                        Escribe <span class="text-white font-bold">“QUIERO PACK”</span> para entrar al grupo privado.
-                    </p>
-                    <a href="https://t.me/+e_23a6AooN44NGE5" target="_blank" class="inline-flex items-center gap-3 bg-primary text-black px-12 py-6 rounded-xl font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
-                        <i data-lucide="send" class="w-6 h-6"></i>
-                        Entrar al Grupo Oficial
-                    </a>
+
+                    <!-- Right Video Display -->
+                    <div class="lg:col-span-8">
+                        <div class="glass-card p-4 rounded-[2.5rem] border-primary/20 shadow-[0_0_80px_rgba(0,255,163,0.15)] relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-[#00ffa3]/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                            
+                            <div class="relative aspect-video rounded-[1.8rem] overflow-hidden bg-black shadow-2xl">
+                                <iframe 
+                                    class="w-full h-full" 
+                                    src="https://www.youtube.com/embed/11cwuDpzp1I?autoplay=0&mute=1&controls=1" 
+                                    title="Football Pro Demo" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                                </iframe>
+                                
+                                <!-- Floating Status Label -->
+                                <div class="absolute top-6 left-6 bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                                    <span class="text-[10px] font-black uppercase text-white">Demo Actual: v2.4</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 flex items-center justify-between px-6">
+                            <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest italic">Captura directa del servidor de desarrollo</p>
+                            <a href="futorbita.html" class="text-primary text-[10px] font-black uppercase tracking-widest hover:underline">Ver detalles técnicos →</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Pricing Section -->
         <section id="precios" class="max-w-4xl mx-auto px-6 mb-40 text-center">
-            <div class="bg-surface border border-surface-border rounded-3xl p-12 relative overflow-hidden shadow-xl dark:shadow-none">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/20 blur-[100px]"></div>
+            <div class="bg-black dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl p-12 relative overflow-hidden shadow-2xl">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 blur-[100px]"></div>
                 
-                <div class="inline-block px-4 py-1.5 rounded-full border border-yellow-400/20 bg-yellow-400/5 text-yellow-400 text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-                    Oferta de Lanzamiento
-                </div>
+                <h3 class="text-primary font-black text-sm uppercase tracking-widest mb-12">10 Proyectos · +100 Prompts · Código Real</h3>
 
-                <div class="flex items-baseline justify-center gap-2 mb-2">
-                    <span class="text-6xl md:text-8xl font-black tracking-tighter text-black dark:text-white">$97</span>
-                    <span class="text-2xl font-bold text-gray-500 uppercase">USD</span>
+                <div class="flex items-baseline justify-center gap-4 mb-2">
+                    <span class="text-gray-500 dark:text-gray-600 text-4xl line-through font-bold">$297</span>
+                    <span class="text-7xl md:text-9xl font-black tracking-tighter text-white">$97</span>
+                    <span class="text-xl font-bold text-primary">USD</span>
                 </div>
-                <h3 class="text-2xl md:text-3xl font-bold text-primary uppercase tracking-tighter mb-12">PAGO ÚNICO - ACCESO DE POR VIDA</h3>
+                <h3 class="text-xl font-bold text-white uppercase tracking-widest mb-12">PAGO ÚNICO — ACCESO DE POR VIDA</h3>
 
                 <div class="grid md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto mb-16">
                     <div class="flex items-center gap-3">
                         <i data-lucide="check-circle" class="text-primary w-5 h-5"></i>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Acceso a las 10 plataformas y sus códigos fuente.</span>
+                        <span class="text-sm font-medium text-gray-300">Acceso total a las 10 plataformas.</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check-circle" class="text-primary w-5 h-5"></i>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Comunidad privada de Vibe Coders.</span>
+                        <span class="text-sm font-medium text-gray-300">Comunidad de Vibe Coders.</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check-circle" class="text-primary w-5 h-5"></i>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Masterclass: Rails + Antigravity.</span>
+                        <span class="text-sm font-medium text-gray-300">Masterclass Rails + Antigravity.</span>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="check-circle" class="text-primary w-5 h-5"></i>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Actualizaciones de por vida gratis.</span>
+                        <span class="text-sm font-medium text-gray-300">Actualizaciones gratis de por vida.</span>
                     </div>
                 </div>
 
-                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="w-full inline-block bg-primary text-center text-black py-6 rounded-xl font-black text-xl md:text-2xl uppercase tracking-tighter hover:scale-[1.02] transition-all shadow-[0_0_50px_rgba(0,255,163,0.2)] mb-8">
-                    Asegurar mi acceso de por vida
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="w-full inline-block bg-primary text-black py-6 rounded-xl font-black text-xl md:text-2xl uppercase tracking-tighter hover:scale-[1.02] transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
+                    🔥 Asegurar mi acceso — $97 USD
                 </a>
-
-                <p class="text-yellow-400/80 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                    <i data-lucide="alert-triangle" class="w-3 h-3"></i> El precio subirá a $197 al finalizar el maratón.
-                </p>
             </div>
         </section>
     </main>
@@ -505,77 +441,52 @@
             <div class="text-primary italic font-black text-sm tracking-tighter uppercase">
                 10 PLATAFORMAS CON IA
             </div>
-
-            <div class="flex flex-col items-center md:items-end gap-4">
-                <div class="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                    <a href="https://t.me/IAcomunIA_Tienda_Web" target="_blank" class="hover:text-primary transition-colors flex items-center gap-2">
-                        <i data-lucide="send" class="w-3 h-3"></i> Telegram
-                    </a>
-                    <a href="#" class="hover:text-white transition-colors">Términos</a>
-                    <a href="#" class="hover:text-white transition-colors">Privacidad</a>
-                    <a href="#" class="hover:text-white transition-colors">Soporte</a>
-                </div>
-                <div class="text-[10px] font-medium text-gray-600 uppercase tracking-widest">
-                    © 2024 10 PLATAFORMAS CON IA. DOMINA EL MERCADO.
-                </div>
+            <div class="text-[10px] font-medium text-gray-600 uppercase tracking-widest text-center">
+                © 2026 Vibe Coding Marathon. Domina el mercado con IA real.
             </div>
         </div>
     </footer>
 
+    <!-- Sticky Bottom Bar -->
+    <div id="sticky-cta" class="fixed bottom-0 left-0 w-full z-[90] sticky-bar">
+        <div class="max-w-4xl mx-auto px-6 pb-8">
+            <div class="bg-white/90 dark:bg-[#0f0f0f]/90 backdrop-blur-md border border-black/10 dark:border-primary/20 p-4 rounded-2xl flex items-center justify-between shadow-2xl">
+                <div class="hidden md:block">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Acceso Completo</p>
+                    <p class="text-sm font-black text-gray-900 dark:text-white">10 PROYECTOS POR <span class="text-primary">$97 USD</span></p>
+                </div>
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all w-full md:w-auto text-center">
+                    Comprar Ahora →
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating Telegram Button -->
     <a href="https://t.me/IAcomunIA_Tienda_Web" target="_blank" 
-       class="fixed bottom-8 right-8 z-[100] bg-[#0088cc] text-white p-4 rounded-full shadow-[0_0_20px_rgba(0,136,204,0.3)] hover:scale-110 hover:shadow-[0_0_30_rgba(0,136,204,0.5)] transition-all group animate-float-bounce radar-effect">
-        <i data-lucide="send" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
-        <span class="absolute right-full mr-4 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            Únete al Telegram
-        </span>
+       class="fixed bottom-24 right-8 z-[100] bg-[#0088cc] text-white p-4 rounded-full shadow-[0_0_20px_rgba(0,136,204,0.3)] hover:scale-110 transition-all group animate-float-bounce radar-effect">
+        <i data-lucide="send" class="w-6 h-6"></i>
     </a>
 
     <script>
-        // Initialize Lucide icons
         lucide.createIcons();
 
-        // Theme Toggle Logic
+        // Theme Toggle
         const themeToggleBtn = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
-
-        // Check for saved theme or default to dark
-        if (localStorage.getItem('theme') === 'light') {
-            htmlElement.classList.remove('dark');
-        } else {
-            htmlElement.classList.add('dark');
-        }
-
         themeToggleBtn.addEventListener('click', () => {
             htmlElement.classList.toggle('dark');
-            
-            if (htmlElement.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
-            
-            // Refresh icons to show correct toggle icon
-            // lucide.createIcons(); // Actually we handled this with CSS (hidden/block)
+            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
         });
 
-        // Reveal animations on scroll
-        const observerOptions = {
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('opacity-100', 'translate-y-0');
-                    entry.target.classList.remove('opacity-0', 'translate-y-10');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('section').forEach(section => {
-            section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-10');
-            observer.observe(section);
+        // Sticky CTA Visibility
+        const stickyCta = document.getElementById('sticky-cta');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                stickyCta.classList.add('visible');
+            } else {
+                stickyCta.classList.remove('visible');
+            }
         });
     </script>
 </body>

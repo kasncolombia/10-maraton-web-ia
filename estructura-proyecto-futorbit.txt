@@ -1,0 +1,71 @@
+contexto de la app de futball 
+
+# 🏗️ Estructura y Features del Proyecto: Futorbi / Órbita
+
+Este documento detalla la arquitectura técnica, las funcionalidades completadas y el roadmap de desarrollo para la plataforma de fútbol del Mundial 2026.
+
+---
+
+## 🗺️ 1. Arquitectura del Sistema (4 Capas Antigravity)
+
+| Capa | Carpeta | Estado | Descripción |
+| :--- | :--- | :--- | :--- |
+| **Capa 1: Directiva** | `directives/` | ✅ Activa | 10 Directivas creadas (desde inicialización hasta UI avanzada). |
+| **Capa 2: Orquestación** | `orchestrators/` | ✅ Activa | Flujos de ejecución secuencial y paralelos definidos. |
+| **Capa 3: Ejecución** | `execution/` | ✅ Activa | Scripts de automatización y lógica de agentes. |
+| **Capa 4: Observabilidad** | `logs/` & `dashboard/` | ✅ Activa | Logger SQLite y Dashboard Streamlit operativo. |
+
+---
+
+## 🚀 2. Estado de Funcionalidades (Features)
+
+### 🟢 Implementado (Listo para producción)
+*   **Base Rails 7:** Configuración con PostgreSQL y Tailwind CSS.
+*   **Sistema de Usuarios:** Autenticación completa con Devise y perfiles extendidos.
+*   **Taxonomía de Fútbol:** Estructura global de Categorías y Subcategorías.
+*   **Core Scoreboard PRO (Sofascore Style):**
+    *   Visualización compacta y agrupada por ligas con logos reales.
+    *   Tabs de filtrado dinámico (Todos, Live, Upcoming, Finished).
+    *   Soporte de husos horarios (Timezone: America/Bogota).
+    *   URLs SEO Pro: `/partidos/:league_slug/:match_slug-id`.
+*   **Blog / News Engine SEO:**
+    *   Páginas dedicadas para noticias (sin modales).
+    *   URLs SEO Pro: `/noticias/:id-slug`.
+    *   Diseño premium con breadcrumbs, categorías y grid responsivo.
+*   **Sistema Social & Engagement:**
+    *   Comentarios Polimórficos: Disponibles en Predicciones y Noticias.
+    *   Reacciones (Fire, Laugh, Angry) en tiempo real.
+    *   Rankings de predictores basados en puntos acumulados.
+*   **Servicio de API Avanzado:** `FootballApiService` con sincronización de metadatos (estadios, árbitros, logos).
+
+### 🟡 En Progreso / Parcial
+*   **Perfil de Usuario Avanzado:** Medallas y logros visuales en proceso.
+*   **Evaluador de Predicciones:** Worker de procesamiento en segundo plano.
+
+### 🔴 Pendiente (Roadmap)
+1.  **Tiempo Real (ActionCable):** Push notifications para goles y eventos.
+2.  **Especial Mundial 2026:** Bracket Prediction interactivo.
+3.  **SEO Avanzado & PWA:** Meta-tags dinámicos por partido/noticia.
+
+---
+
+## 📊 3. Modelos de Datos (Esquema Actual)
+
+- **User:** Devise + Gamificación.
+- **Match:** Encuentros con telemetría (estadios, árbitros, logos, ligas).
+- **Article:** Noticias con soporte para SEO slugs.
+- **Comment:** Sistema polimórfico (commentable: Prediction | Article).
+- **Reaction:** Reacciones sociales por contenido.
+- **Prediction:** Pronósticos vinculados a usuarios y partidos.
+
+---
+
+## 🛠️ 4. Tecnologías Clave en Uso
+
+- **Frontend:** Tailwind CSS, Stimulus JS, Turbo.
+- **Backend:** Rails 7.2+, Ruby 4.0 (Portable Env).
+- **Integraciones:** API-Football.
+- **SEO:** Friendly Slugs, Semantic HTML5.
+
+---
+*Última actualización: 30 de Abril, 2026 (SEO News & Polymorphic Social Update)*

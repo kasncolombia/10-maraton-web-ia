@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futbol Orbita - Plataforma Viva con IA</title>
+    <title>Futbol Órbita PRO - Plataforma Avanzada con IA</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,13 +21,6 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
-        // Theme initialization
-        if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
-            document.documentElement.classList.remove('dark');
-        } else {
-            document.documentElement.classList.add('dark');
-        }
-
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -37,12 +30,10 @@
                             DEFAULT: '#00ffa3',
                             dark: '#00d689',
                         },
-                        surface: 'var(--card-bg)',
-                        'surface-border': 'var(--border-color)',
                     },
                     fontFamily: {
                         sans: ['Outfit', 'sans-serif'],
-                    },
+                    }
                 }
             }
         }
@@ -50,11 +41,12 @@
 
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-color: #050505;
-            --card-bg: #f9f9f9;
-            --border-color: rgba(0, 0, 0, 0.08);
-            --grid-color: rgba(0, 0, 0, 0.03);
+            --bg-color: #050505;
+            --text-color: #ffffff;
+            --card-bg: #0f0f0f;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --grid-color: rgba(255, 255, 255, 0.02);
+            --neon: #00ffa3;
         }
 
         .dark {
@@ -65,11 +57,33 @@
             --grid-color: rgba(255, 255, 255, 0.02);
         }
 
+        :root:not(.dark) {
+            --bg-color: #ffffff;
+            --text-color: #050505;
+            --card-bg: #f9f9f9;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --grid-color: rgba(0, 0, 0, 0.03);
+        }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             overflow-x: hidden;
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 163, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 163, 0.03) 0%, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         .grid-bg {
@@ -79,7 +93,7 @@
             width: 100%;
             height: 100%;
             background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
-                              linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+                               linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 50px 50px;
             z-index: -2;
             pointer-events: none;
@@ -91,48 +105,27 @@
             border: 1px solid var(--border-color);
         }
 
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(0, 255, 163, 0.15);
+        .diagonal-separator {
+            background: linear-gradient(135deg, transparent 49.5%, var(--neon) 49.5%, var(--neon) 50.5%, transparent 50.5%);
+            height: 100px;
+            width: 100%;
+            opacity: 0.2;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
+            background: #050505;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: var(--border-color);
+            background: #1f1f1f;
             border-radius: 10px;
         }
-
-        /* Swiper Custom Styles */
-        .swiper {
-            width: 100%;
-            padding-bottom: 50px !important;
-        }
-        .swiper-slide {
-            opacity: 0.4;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: scale(0.9);
-        }
-        .swiper-slide-active {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .swiper-pagination-bullet {
-            background: var(--text-color) !important;
-            opacity: 0.2;
-        }
-        .swiper-pagination-bullet-active {
-            background: #00ffa3 !important;
-            opacity: 1;
-        }
-        .swiper-button-next, .swiper-button-prev {
-            color: #00ffa3 !important;
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: var(--neon);
         }
 
-        /* Attention-grabbing animation for Telegram */
         @keyframes float-bounce {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-10px) scale(1.05); }
@@ -141,7 +134,6 @@
             animation: float-bounce 3s ease-in-out infinite;
         }
 
-        /* Radar Animation */
         @keyframes radar {
             0% { transform: scale(1); opacity: 0.5; }
             100% { transform: scale(2.5); opacity: 0; }
@@ -155,6 +147,29 @@
             z-index: -1;
             animation: radar 2s ease-out infinite;
         }
+
+        .swiper {
+            width: 100%;
+            padding-bottom: 50px !important;
+        }
+        .swiper-slide {
+            opacity: 0.6;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: scale(0.9);
+        }
+        .swiper-slide-active {
+            opacity: 1;
+            transform: scale(1);
+            filter: drop-shadow(0 0 20px rgba(0, 255, 163, 0.1));
+        }
+        .swiper-pagination-bullet-active {
+            background: var(--neon) !important;
+        }
+
+        @keyframes progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
     </style>
 </head>
 <body class="font-sans antialiased custom-scrollbar">
@@ -162,402 +177,345 @@
     <div class="grid-bg"></div>
 
     <!-- Header -->
-    <header class="fixed top-0 left-0 w-full z-50 border-b border-surface-border bg-body-bg/80 backdrop-blur-md">
+    <header class="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <a href="index.html" class="flex items-center gap-2 group">
                 <i data-lucide="arrow-left" class="w-4 h-4 text-gray-500 group-hover:text-primary transition-colors"></i>
-                <span class="text-primary italic font-extrabold text-xl tracking-tighter">FUTBOL ÓRBITA</span>
+                <span class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">FOOTBALL ÓRBITA PRO</span>
             </a>
 
             <div class="flex items-center gap-4">
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-gray-500">
                     <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
                 </button>
-                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:bg-primary-dark transition-all">
-                    Obtener el Código
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,255,163,0.3)]">
+                    Obtener Código Pro
                 </a>
             </div>
         </nav>
     </header>
 
-    <main class="pt-32 pb-20">
+    <main class="pt-32">
         <!-- Hero Section -->
         <section class="max-w-7xl mx-auto px-6 mb-24 grid lg:grid-cols-2 gap-12 items-center">
             <div>
-                <div class="inline-block px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-bold uppercase tracking-widest mb-6">
-                    Nicho #1: Deportes & Gamificación
+                <div class="inline-block px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-bold uppercase tracking-widest mb-6 animate-pulse">
+                    Oportunidad de Oro: Mundial 2026
                 </div>
-                <h1 class="text-5xl md:text-6xl font-black tracking-tighter mb-6 leading-tight uppercase">
-                    No es un blog,<br>es una <span class="text-primary">plataforma viva</span>
+                <h1 class="text-6xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.0] uppercase">
+                    TU PROPIO SITIO DE <span class="text-primary">FÚTBOL</span>.<br>LISTO PARA EL 2026.
                 </h1>
-                <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 max-w-lg">
-                    Convierte lectores en usuarios activos con predicciones basadas en IA, sistemas de comentarios dinámicos y gamificación competitiva.
+                <p class="text-gray-400 text-lg mb-8 max-w-lg font-light">
+                    Resultados en vivo, noticias que rankean en Google y una comunidad que vuelve sola. Todo construido con IA para que tú solo te preocupes de monetizar.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-                        <i data-lucide="check-circle" class="text-primary w-4 h-4"></i> Rails 7 + Turbo
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10">
+                        <i data-lucide="zap" class="w-4 h-4"></i> Genera Ingresos
                     </div>
-                    <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-                        <i data-lucide="check-circle" class="text-primary w-4 h-4"></i> Redis Real-time
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10">
+                        <i data-lucide="users" class="w-4 h-4"></i> Audiencia Fiel
                     </div>
-                    <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-                        <i data-lucide="check-circle" class="text-primary w-4 h-4"></i> IA Predictions
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i> Tráfico Orgánico
                     </div>
                 </div>
             </div>
             <div class="relative group">
-                <div class="absolute -inset-4 bg-primary/20 blur-3xl opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                <img src="futorbita/vista-dark-futorbita.png" alt="Futbol Orbita Dashboard" class="relative rounded-2xl border border-surface-border shadow-2xl w-full">
+                <div class="absolute -inset-10 bg-primary/20 blur-[120px] opacity-30 group-hover:opacity-50 transition-all duration-700"></div>
+                <img src="futorbita/vista-dark-futorbita.png" alt="Futbol Orbita Dashboard" class="relative rounded-2xl border border-white/5 shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full transition-transform duration-700 group-hover:scale-[1.02]">
             </div>
         </section>
 
-        <!-- Features Grid -->
-        <section class="max-w-7xl mx-auto px-6 mb-32">
+        <div class="diagonal-separator mb-24"></div>
+
+        <!-- Video Demo Section -->
+        <section class="max-w-7xl mx-auto px-6 mb-40 relative">
+            <!-- Neon Glow Background -->
+            <div class="absolute inset-0 bg-[#00ffa3]/5 blur-[150px] -z-10 rounded-full"></div>
+            
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-black tracking-tighter uppercase mb-4">Features que generan Retención</h2>
-                <div class="w-20 h-1 bg-primary mx-auto"></div>
+                <div class="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-4">
+                    <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                    <span class="text-[10px] font-black uppercase tracking-widest text-primary">Estado: Avance del 70%</span>
+                </div>
+                <h2 class="text-4xl font-black tracking-tighter uppercase mb-4">Demo en <span class="text-primary">Tiempo Real</span></h2>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1: Predicciones -->
-                <div class="bg-surface border border-surface-border p-8 rounded-2xl transition-transform hover:-translate-y-2">
-                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                        <i data-lucide="trending-up" class="text-primary w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 uppercase">Predicciones con IA</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-                        Análisis de probabilidad real por partido. Deja que la IA haga el trabajo pesado y los usuarios interactúen con los resultados.
-                    </p>
-                    <div class="bg-black/5 dark:bg-white/5 rounded-xl p-4 border border-surface-border">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-[10px] font-bold uppercase text-gray-500">Real Madrid vs Barça</span>
-                            <span class="text-[10px] font-bold text-primary">IA: 62% Gana</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-primary h-full" style="width: 62%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Feature 2: Gamificación -->
-                <div class="bg-surface border border-surface-border p-8 rounded-2xl transition-transform hover:-translate-y-2">
-                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                        <i data-lucide="trophy" class="text-primary w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 uppercase">Ranking & Puntos</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-                        Sistema de recompensas por comentar y acertar. Gamificación pura para aumentar el DAU (Daily Active Users).
-                    </p>
-                    <img src="futorbita/activity_achievements_rbita.png" alt="Achievements" class="rounded-lg border border-surface-border w-full opacity-80 hover:opacity-100 transition-opacity">
-                </div>
-
-                <!-- Feature 3: Comunidad -->
-                <div class="bg-surface border border-surface-border p-8 rounded-2xl transition-transform hover:-translate-y-2">
-                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                        <i data-lucide="messages-square" class="text-primary w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 uppercase">Comunidad Dinámica</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-                        Comentarios anidados tipo Reddit, reacciones rápidas y notificaciones por ActionCable para una experiencia viva.
-                    </p>
-                    <div class="space-y-3">
-                        <div class="flex gap-3 items-start">
-                            <div class="w-8 h-8 rounded-full bg-gray-500 flex-shrink-0"></div>
-                            <div class="bg-black/5 dark:bg-white/5 p-3 rounded-lg flex-1">
-                                <p class="text-[10px] font-bold text-primary mb-1">@vibe_coder</p>
-                                <p class="text-[10px] text-gray-500">¡Esa predicción es brutal! El Madrid viene fuerte.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- IA Pro Features -->
-        <section class="max-w-7xl mx-auto px-6 mb-32">
-            <div class="bg-primary/5 border border-primary/20 rounded-3xl p-8 md:p-12 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-12 opacity-5">
-                    <i data-lucide="bot" class="w-64 h-64"></i>
-                </div>
-                <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <h2 class="text-3xl md:text-4xl font-black tracking-tighter uppercase mb-6">
-                            Potenciado por <span class="text-primary">IA Real</span>
-                        </h2>
-                        <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-                            No solo mostramos datos. Nuestra integración con Antigravity permite que la plataforma genere valor automáticamente:
-                        </p>
-                        <ul class="space-y-4">
-                            <li class="flex items-start gap-3">
-                                <i data-lucide="sparkles" class="text-primary w-5 h-5 mt-1"></i>
+            <div class="grid lg:grid-cols-12 gap-8 items-center">
+                <!-- Sidebar Info -->
+                <div class="lg:col-span-4 order-2 lg:order-1">
+                    <div class="glass-card p-8 rounded-[2rem] border-primary/20">
+                        <h4 class="text-xl font-black uppercase tracking-tighter mb-6 text-white dark:text-white">¿Qué estás viendo?</h4>
+                        <ul class="space-y-6">
+                            <li class="flex gap-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="monitor" class="text-primary w-5 h-5"></i>
+                                </div>
                                 <div>
-                                    <span class="font-bold text-sm uppercase">Resumen Automático</span>
-                                    <p class="text-xs text-gray-500">La IA analiza el partido y redacta una crónica al instante.</p>
+                                    <p class="text-xs font-black uppercase tracking-widest text-primary mb-1">Dashboard v2.0</p>
+                                    <p class="text-[11px] text-gray-500 leading-relaxed">Interfaz real funcionando con datos en vivo de la API y sincronización Turbo.</p>
                                 </div>
                             </li>
-                            <li class="flex items-start gap-3">
-                                <i data-lucide="brain-circuit" class="text-primary w-5 h-5 mt-1"></i>
+                            <li class="flex gap-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="zap" class="text-primary w-5 h-5"></i>
+                                </div>
                                 <div>
-                                    <span class="font-bold text-sm uppercase">Análisis Táctico</span>
-                                    <p class="text-xs text-gray-500">Explicaciones profundas de por qué ocurrió el resultado.</p>
+                                    <p class="text-xs font-black uppercase tracking-widest text-primary mb-1">IA Activa</p>
+                                    <p class="text-[11px] text-gray-500 leading-relaxed">Generación de artículos SEO en segundo plano mediante agentes Antigravity.</p>
+                                </div>
+                            </li>
+                            <li class="flex gap-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                                    <i data-lucide="database" class="text-primary w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-black uppercase tracking-widest text-primary mb-1">Back-end Rails</p>
+                                    <p class="text-[11px] text-gray-500 leading-relaxed">Gestión robusta de usuarios, perfiles y sistema de puntos (Gamificación).</p>
                                 </div>
                             </li>
                         </ul>
                     </div>
-                    <div class="bg-surface border border-surface-border p-6 rounded-2xl shadow-xl">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-primary">Generando Análisis IA...</span>
-                        </div>
-                        <div class="space-y-3">
-                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full w-3/4"></div>
-                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full w-full"></div>
-                            <div class="h-2 bg-gray-200 dark:bg-gray-800 rounded-full w-5/6"></div>
-                        </div>
-                        <div class="mt-6 pt-6 border-t border-surface-border">
-                            <p class="text-[11px] italic text-gray-500">"El Real Madrid dominó las transiciones rápidas gracias a un bloque bajo muy compacto..."</p>
+                </div>
+
+                <!-- Video Container -->
+                <div class="lg:col-span-8 order-1 lg:order-2">
+                    <div class="glass-card p-4 rounded-[3rem] border-primary/40 shadow-[0_0_80px_rgba(0,255,163,0.15)] relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-[#00ffa3]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative aspect-video rounded-[2.5rem] overflow-hidden bg-black shadow-2xl">
+                            <iframe 
+                                class="w-full h-full" 
+                                src="https://www.youtube.com/embed/11cwuDpzp1I?autoplay=0&mute=0&controls=1" 
+                                title="Futorbita Demo Real" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- App Tour Carousel -->
-        <section class="max-w-7xl mx-auto px-6 mb-32">
+        <!-- Benefits Showcase -->
+        <section class="max-w-7xl mx-auto px-6 mb-40">
+            <div class="text-center mb-24">
+                <h2 class="text-4xl md:text-6xl font-black tracking-tighter uppercase mb-4">Todo lo que necesitas <br>para <span class="text-primary">Dominar el Nicho</span></h2>
+                <p class="text-gray-500 uppercase tracking-widest text-[10px] font-bold">Un sistema diseñado para capturar la fiebre del fútbol</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Benefit 1: Scores -->
+                <div class="glass-card p-8 rounded-3xl group hover:border-primary/50 transition-all">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform text-primary text-2xl">
+                        ⚽
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">RESULTADOS EN VIVO</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-light">
+                        Ve los partidos del Mundial en tiempo real, agrupados por liga, con logos reales. Tus usuarios siempre vuelven por los scores.
+                    </p>
+                </div>
+
+                <!-- Benefit 2: SEO -->
+                <div class="glass-card p-8 rounded-3xl group hover:border-primary/50 transition-all">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform text-primary text-2xl">
+                        📰
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">NOTICIAS SEO</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-light">
+                        Publica artículos con URLs optimizadas para SEO. Google indexa tu contenido automáticamente. Tráfico orgánico sin pagar publicidad.
+                    </p>
+                </div>
+
+                <!-- Benefit 3: Community -->
+                <div class="glass-card p-8 rounded-3xl group hover:border-primary/50 transition-all">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform text-primary text-2xl">
+                        💬
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">COMUNIDAD ACTIVA</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-light">
+                        Comentarios, reacciones y rankings de predictores. Tu audiencia opina, compite y se engancha. Más tiempo en tu sitio = más ingresos.
+                    </p>
+                </div>
+
+                <!-- Benefit 4: Money -->
+                <div class="glass-card p-8 rounded-3xl group hover:border-primary/50 transition-all">
+                    <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform text-primary text-2xl">
+                        💰
+                    </div>
+                    <h3 class="text-xl font-black mb-4 uppercase tracking-tighter">LISTA PARA MONETIZAR</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed font-light">
+                        AdSense, afiliados, membresías premium. La plataforma está diseñada para generar ingresos. El Mundial 2026 es tu ventana.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Antigravity Section: Simplified -->
+        <section class="max-w-7xl mx-auto px-6 mb-40">
+            <div class="bg-white/5 border border-white/5 rounded-[3rem] p-12 md:p-20 relative overflow-hidden">
+                <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 blur-[150px]"></div>
+                
+                <div class="grid md:grid-cols-2 gap-20 items-center">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-8">
+                            ¿CÓMO FUNCIONA <br><span class="text-primary">POR DENTRO?</span>
+                        </h2>
+                        <p class="text-gray-400 text-lg mb-12 font-light leading-relaxed">
+                            No necesitas entenderlo todo. Solo saber que funciona solo. La IA sincroniza los partidos, genera artículos y monitorea errores — sin que toques nada.
+                        </p>
+                        
+                        <div class="space-y-8">
+                            <div class="flex gap-6 items-center">
+                                <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary font-black">01</div>
+                                <p class="text-gray-500 text-sm">Sincronización automática de datos reales.</p>
+                            </div>
+                            <div class="flex gap-6 items-center">
+                                <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary font-black">02</div>
+                                <p class="text-gray-500 text-sm">Generación de contenido optimizado para buscadores.</p>
+                            </div>
+                            <div class="flex gap-6 items-center">
+                                <div class="w-12 h-12 rounded-full border border-primary/20 flex items-center justify-center text-primary font-black">03</div>
+                                <p class="text-gray-500 text-sm">Auto-monitoreo de estabilidad 24/7.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <div class="glass-card p-10 rounded-[2rem] relative z-10">
+                            <div class="flex items-center gap-3 mb-8">
+                                <div class="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-primary">Sistema Operativo Autónomo</span>
+                            </div>
+                            <img src="futorbita/activity_achievements_rbita.png" alt="Dashboard Interno" class="rounded-xl border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                        </div>
+                        <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-primary/20 blur-[60px] z-0"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Tour -->
+        <section class="max-w-7xl mx-auto px-6 mb-40">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-black tracking-tighter uppercase mb-4">Tour por la Plataforma</h2>
-                <p class="text-gray-500 text-sm">Explora todas las vistas listas para usar</p>
+                <h2 class="text-4xl font-black tracking-tighter uppercase mb-4">¿Qué verán tus usuarios?</h2>
+                <div class="w-12 h-1 bg-primary mx-auto mb-4"></div>
+                <p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Experiencia Premium de Clase Mundial</p>
             </div>
 
             <div class="swiper mySwiper">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/vista-dark-futorbita.png" alt="Dashboard Principal" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Dashboard Principal</h4>
-                                <p class="text-[10px] text-gray-500">Feed dinámico y estadísticas en tiempo real</p>
+                        <div class="glass-card rounded-[2rem] overflow-hidden group">
+                            <img src="futorbita/vista-dark-futorbita.png" alt="Dashboard" class="w-full transition-all duration-500">
+                            <div class="p-8">
+                                <h4 class="font-black uppercase tracking-tighter mb-1">Centro de Resultados</h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Todo el mundial en un solo lugar</p>
                             </div>
                         </div>
                     </div>
                     <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/user_profile_settings_rbita.png" alt="Perfil de Usuario" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Perfil & Ajustes</h4>
-                                <p class="text-[10px] text-gray-500">Gestión completa de identidad del usuario</p>
+                        <div class="glass-card rounded-[2rem] overflow-hidden group">
+                            <img src="futorbita/activity_achievements_rbita.png" alt="Gamificación" class="w-full transition-all duration-500">
+                            <div class="p-8">
+                                <h4 class="font-black uppercase tracking-tighter mb-1">Gamificación</h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Medallas y Rankings que enganchan</p>
                             </div>
                         </div>
                     </div>
                     <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/activity_achievements_rbita.png" alt="Logros y Actividad" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Gamificación</h4>
-                                <p class="text-[10px] text-gray-500">Sistema de niveles y logros desbloqueables</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/account_settings_rbit.png" alt="Ajustes de Cuenta" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Configuración</h4>
-                                <p class="text-[10px] text-gray-400">Personalización avanzada de la cuenta</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/security_preferences_rbita.png" alt="Privacidad" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Seguridad</h4>
-                                <p class="text-[10px] text-gray-400">Control total sobre la privacidad y accesos</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/inicio-sesion.png" alt="Login" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Acceso (Auth)</h4>
-                                <p class="text-[10px] text-gray-400">Flujos de inicio de sesión optimizados</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="bg-surface border border-surface-border rounded-2xl overflow-hidden shadow-2xl">
-                            <img src="futorbita/registro.png" alt="Registro" class="w-full">
-                            <div class="p-6 text-center">
-                                <h4 class="font-bold uppercase tracking-widest text-xs mb-1">Onboarding</h4>
-                                <p class="text-[10px] text-gray-400">Registro rápido para maximizar conversión</p>
+                        <div class="glass-card rounded-[2rem] overflow-hidden group">
+                            <img src="futorbita/user_profile_settings_rbita.png" alt="Perfil" class="w-full transition-all duration-500">
+                            <div class="p-8">
+                                <h4 class="font-black uppercase tracking-tighter mb-1">Mi Cuenta PRO</h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Personalización para tus usuarios</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Add Pagination -->
                 <div class="swiper-pagination"></div>
-                <!-- Add Navigation -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
             </div>
         </section>
 
-        <!-- Profile & Settings Showcase (Already exists, but I'll keep it as a detailed breakdown) -->
-        <section class="bg-black dark:bg-[#030303] py-24 border-y border-surface-border">
-            <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-                <div class="order-2 md:order-1">
-                    <div class="relative">
-                         <div class="absolute -inset-10 bg-primary/10 blur-[100px]"></div>
-                         <img src="futorbita/user_profile_settings_rbita.png" alt="Profile Settings" class="relative rounded-2xl border border-surface-border shadow-2xl">
-                    </div>
+        <!-- Technical Detail (Secondary) -->
+        <section class="max-w-4xl mx-auto px-6 mb-40">
+            <div class="text-center mb-12">
+                <h3 class="text-2xl font-black uppercase tracking-tighter text-gray-500">¿Cómo está construido?</h3>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-700">Para los curiosos técnicos</p>
+            </div>
+            <div class="bg-black/40 p-10 rounded-3xl border border-white/5 font-mono text-xs text-gray-500 leading-relaxed">
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="w-3 h-3 bg-red-500 rounded-full"></span>
+                    <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
+                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
                 </div>
-                <div class="order-1 md:order-2">
-                    <h2 class="text-4xl font-black tracking-tighter uppercase mb-6 leading-tight">
-                        Perfiles que crean <br><span class="text-primary">identidad</span>
-                    </h2>
-                    <p class="text-gray-400 mb-8">
-                        No es solo un login básico. Los usuarios tienen su historial de predicciones, logros desbloqueados y personalización completa. La retención se basa en la identidad.
-                    </p>
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="text-primary font-bold uppercase text-xs tracking-widest mb-2">Seguridad</h4>
-                            <p class="text-gray-500 text-xs">Preferencias avanzadas y gestión de sesiones activas.</p>
-                        </div>
-                        <div>
-                            <h4 class="text-primary font-bold uppercase text-xs tracking-widest mb-2">Logros</h4>
-                            <p class="text-gray-500 text-xs">Sistema de niveles basado en la actividad real.</p>
-                        </div>
-                    </div>
-                </div>
+                <p><span class="text-primary"># Capa 4 Antigravity Activada</span></p>
+                <p>> rails new futorbi_pro --css tailwind --database sqlite3</p>
+                <p>> Antigravity::Director.initialize_orchestration!</p>
+                <p>> Syncing real-time match data (Sofascore API)... <span class="text-primary">[OK]</span></p>
+                <p>> Initializing polymorphic comment engine... <span class="text-primary">[OK]</span></p>
+                <p>> SEO Article Factory: Running agents... <span class="text-primary">[DONE]</span></p>
             </div>
         </section>
 
-        <!-- Exclusive Access Section -->
-        <section class="max-w-4xl mx-auto px-6 mb-40 text-center">
-            <div class="relative p-12 rounded-3xl overflow-hidden border border-primary/20 bg-black shadow-[0_0_100px_rgba(0,255,163,0.1)]">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50"></div>
-                
-                <div class="relative z-10">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20">
-                        <i data-lucide="lock" class="text-primary w-8 h-8"></i>
-                    </div>
-                    <h2 class="text-3xl md:text-5xl font-black tracking-tighter uppercase mb-4 text-white">
-                        🔒 Acceso exclusivo por <span class="text-primary flex inline-flex items-center gap-2">
-                            Telegram <i data-lucide="send" class="w-8 h-8"></i>
-                        </span>
-                    </h2>
-                    <p class="text-gray-300 text-lg mb-8">
-                        Escribe <span class="text-white font-bold">“QUIERO PACK”</span> para entrar al grupo privado.
-                    </p>
-                    <a href="https://t.me/+e_23a6AooN44NGE5" target="_blank" class="inline-flex items-center gap-3 bg-primary text-black px-12 py-6 rounded-xl font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
-                        <i data-lucide="send" class="w-6 h-6"></i>
-                        Entrar al Grupo Oficial
+        <!-- Final CTA -->
+        <section class="max-w-5xl mx-auto px-6 mb-40 text-center">
+            <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-8">EL MUNDIAL EMPIEZA PRONTO. <br><span class="text-primary">TU SITIO PUEDE ESTAR LISTO HOY.</span></h2>
+            <p class="text-gray-500 text-lg mb-12 max-w-2xl mx-auto font-light">Miles de fanáticos buscando resultados, noticias y predicciones. ¿Quieres capturar ese tráfico y empezar a facturar?</p>
+            
+            <div class="flex flex-col gap-8 justify-center items-center">
+                <div class="text-xs font-black uppercase tracking-widest text-primary bg-primary/5 px-6 py-2 rounded-full border border-primary/20">
+                    AdSense · Afiliados · Membresías Premium · Patrocinios
+                </div>
+                <div class="flex flex-col md:flex-row gap-6 items-center">
+                    <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-16 py-6 rounded-sm font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.4)]">
+                        🔥 Quiero mi plataforma de fútbol — $97
+                    </a>
+                    <a href="index.html" class="text-gray-500 hover:text-white transition-colors uppercase tracking-widest text-xs font-black">
+                        Ver otros nichos →
                     </a>
                 </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="max-w-4xl mx-auto px-6 py-32 text-center">
-            <h2 class="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-8">¿Listo para construir el futuro del fútbol?</h2>
-            <p class="text-gray-600 dark:text-gray-400 mb-12 text-lg">
-                Este es solo uno de los 10 nichos incluidos. Obtén el stack completo, los modelos de Rails y el frontend listo para monetizar.
-            </p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-12 py-6 rounded-sm font-black text-xl uppercase tracking-tighter hover:scale-105 transition-all shadow-[0_0_50px_rgba(0,255,163,0.3)]">
-                    Acceder ahora por $97
-                </a>
-                <a href="index.html" class="border border-surface-border px-12 py-6 rounded-sm font-black text-xl uppercase tracking-tighter hover:bg-black/5 dark:hover:bg-white/5 transition-all">
-                    Ver otros nichos
-                </a>
+                <p class="text-[10px] font-bold text-gray-700 uppercase tracking-widest">Acceso completo · Código fuente · Sin mensualidades</p>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-surface-border py-12 bg-gray-50 dark:bg-[#030303]">
+    <footer class="border-t border-white/5 py-16 bg-[#030303]">
         <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-primary italic font-black text-sm tracking-tighter uppercase">
-                FUTBOL ÓRBITA × 10 PLATAFORMAS CON IA
-            </div>
-
-            <div class="flex flex-col items-center md:items-end gap-4">
-                <div class="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-gray-500">
-                    <a href="https://t.me/IAcomunIA_Tienda_Web" target="_blank" class="hover:text-primary transition-colors flex items-center gap-2">
-                        <i data-lucide="send" class="w-3 h-3"></i> Telegram
-                    </a>
-                    <a href="#" class="hover:text-white transition-colors">Términos</a>
-                    <a href="#" class="hover:text-white transition-colors">Privacidad</a>
-                    <a href="#" class="hover:text-white transition-colors">Soporte</a>
-                </div>
-                <div class="text-[10px] font-medium text-gray-600 uppercase tracking-widest">
-                    © 2024 VIBE CODING MARATHON.
-                </div>
-            </div>
+            <div class="text-primary italic font-black text-sm tracking-tighter uppercase">FOOTBALL ÓRBITA PRO</div>
+            <div class="text-[10px] font-medium text-gray-600 uppercase tracking-widest text-center">© 2026 Vibe Coding Marathon. Todos los derechos reservados.</div>
         </div>
     </footer>
 
-    <!-- Floating Telegram Button -->
+    <!-- Floating Telegram -->
     <a href="https://t.me/IAcomunIA_Tienda_Web" target="_blank" 
-       class="fixed bottom-8 right-8 z-[100] bg-[#0088cc] text-white p-4 rounded-full shadow-[0_0_20px_rgba(0,136,204,0.3)] hover:scale-110 hover:shadow-[0_0_30px_rgba(0,136,204,0.5)] transition-all group animate-float-bounce radar-effect">
-        <i data-lucide="send" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
-        <span class="absolute right-full mr-4 bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            Únete al Telegram
-        </span>
+       class="fixed bottom-8 right-8 z-[100] bg-[#0088cc] text-white p-4 rounded-full shadow-[0_0_20px_rgba(0,136,204,0.3)] hover:scale-110 transition-all group animate-float-bounce radar-effect">
+        <i data-lucide="send" class="w-6 h-6"></i>
     </a>
 
     <script>
         lucide.createIcons();
 
-        // Theme Toggle Logic
         const themeToggleBtn = document.getElementById('theme-toggle');
         const htmlElement = document.documentElement;
-
         themeToggleBtn.addEventListener('click', () => {
             htmlElement.classList.toggle('dark');
             localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
         });
 
-        // Initialize Swiper
         var swiper = new Swiper(".mySwiper", {
             effect: "coverflow",
             grabCursor: true,
             centeredSlides: true,
             slidesPerView: "auto",
-            coverflowEffect: {
-                rotate: 0,
-                stretch: 0,
-                depth: 100,
-                modifier: 2,
-                slideShadows: true,
-            },
-            keyboard: {
-                enabled: true,
-            },
-            mousewheel: {
-                thresholdDelta: 70,
-            },
+            coverflowEffect: { rotate: 0, stretch: 0, depth: 100, modifier: 2, slideShadows: true },
             loop: true,
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-            },
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
+            pagination: { el: ".swiper-pagination", clickable: true },
             breakpoints: {
-                640: {
-                    slidesPerView: 1,
-                },
-                768: {
-                    slidesPerView: 2,
-                },
-                1024: {
-                    slidesPerView: 3,
-                },
+                640: { slidesPerView: 1 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 }
             }
         });
     </script>

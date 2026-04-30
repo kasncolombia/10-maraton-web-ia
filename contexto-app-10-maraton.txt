@@ -1,0 +1,67 @@
+# 🚀 PROYECTO: 10 PLATAFORMAS CON IA - VIBE CODING MARATHON
+
+Este documento proporciona una visión holística y técnica del ecosistema "10-maraton-web", diseñado para centralizar el conocimiento y los objetivos del maratón de desarrollo.
+
+---
+
+## 🎯 1. Visión General
+El proyecto **"10 Plataformas con IA"** es un desafío de "Vibe Coding" donde se construyen, despliegan y monetizan 10 aplicaciones SaaS completas, cada una atacando un nicho de mercado específico. El objetivo no es solo educativo, sino la creación de activos digitales reales.
+
+**Misión:** Dominar el stack **Rails 7 + Antigravity + IA** para pasar de la idea al producto facturable en tiempo récord.
+
+---
+
+## 🏗️ 2. Arquitectura de Agentes (4 Capas Antigravity)
+El desarrollo se rige por un sistema de orquestación de agentes dividido en 4 niveles operativos:
+
+1.  **Capa 1: Directiva (`directives/`):** Define el "Qué". Contiene las reglas de negocio, la identidad visual y los estándares de código.
+2.  **Capa 2: Orquestación (`orchestrators/`):** Gestiona los flujos. Decide qué agente de ejecución debe actuar y en qué orden.
+3.  **Capa 3: Ejecución (`execution/`):** El "Brazo Ejecutor". Scripts que modifican el código, integran APIs y realizan despliegues.
+4.  **Capa 4: Observabilidad (`logs/` & `dashboard/`):** Monitorización en tiempo real mediante SQLite y Dashboards (Streamlit) para trazar cada acción del sistema.
+
+---
+
+## 🏟️ 3. Producto Estrella: Futorbi / Órbita (Nicho Football)
+Es la plataforma más avanzada del ecosistema, enfocada en el Mundial 2026 y ligas globales.
+
+### ✅ Features Core Implementadas:
+*   **Scoreboard PRO:** Inspirado en Sofascore, con datos en tiempo real agrupados por ligas y logos oficiales.
+*   **News Engine SEO:** Sistema de noticias con slugs dinámicos (`/noticias/id-titulo`) y optimización semántica.
+*   **Social Social & Engagement:** Comentarios polimórficos y reacciones (Fire, Laugh, Angry) que funcionan tanto en noticias como en partidos.
+*   **Gamificación:** Sistema de puntos, niveles y rankings de predictores para fomentar el DAU (Daily Active Users).
+*   **IA Predictions:** Integración con modelos de IA para generar análisis tácticos y crónicas automáticas post-partido.
+
+---
+
+## 📊 4. Roadmap de los 10 Nichos
+El maratón cubre 10 sectores estratégicos:
+1.  **FOOTBALL PRO:** (Avanzado) - Futorbi/Órbita. Con Scoreboard PRO, Social Engine y SEO News.
+2.  **CRYPTO:** (Avanzado) - Análisis de sentimiento y agentes de trading.
+3.  **TAROT:** (Nuevo) - Lectura de cartas con IA (Flutter App).
+4.  **FITNESS:** (Nuevo) - Coach personal con seguimiento IA (Flutter App).
+5.  **IA TOOLS:** Automatización de flujos de trabajo.
+6.  **TOURISM:** Planificadores de viajes inteligentes.
+7.  **GASTRO:** Recomendadores de nicho y gestión de reservas.
+8.  **GADGETS:** Reviews automáticas y tracking de precios.
+9.  **RELIGION:** Plataformas de comunidad y contenido espiritual.
+10. **ANIME:** Bases de datos dinámicas y tracking de lanzamientos.
+
+---
+
+## 🛠️ 5. Stack Tecnológico
+*   **Backend:** Ruby on Rails 7.2+, Ruby 4.0 (Entorno Portable).
+*   **Frontend:** Tailwind CSS, Stimulus JS, Turbo (Hotwire).
+*   **Interactividad:** ActionCable (WebSockets para tiempo real).
+*   **Base de Datos:** PostgreSQL (Producción), SQLite (Logs/Desarrollo).
+*   **APIs:** API-Football (Sports Data), Claude/OpenAI (Inteligencia).
+*   **Estrategia SEO:** Friendly Slugs, HTML5 Semántico, Meta-tags dinámicos.
+
+---
+
+## 💰 6. Estrategia de Monetización & Comunidad
+*   **Modelo de Negocio:** Acceso de por vida (Lifetime Access) al código fuente y actualizaciones por $97 USD (Lanzamiento).
+*   **Comunidad:** Grupo privado en Telegram para "Vibe Coders" donde se comparten hacks, prompts de Antigravity y estrategias de despliegue.
+*   **Canales:** Venta directa vía Ko-fi y soporte vía Telegram oficial.
+
+---
+*Última actualización de contexto: 30 de Abril, 2026.*
