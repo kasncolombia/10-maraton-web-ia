@@ -298,6 +298,92 @@
             </div>
         </section>
 
+        <!-- Visual Tour Section (Creative Stacked Version) -->
+        <section class="max-w-7xl mx-auto px-6 mb-40">
+            <div class="text-center mb-24">
+                <h2 class="text-4xl font-black tracking-tighter uppercase mb-4">Tour Visual <span class="text-primary">Explosivo</span></h2>
+                <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Haz clic en las capturas para ampliar la experiencia</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-20">
+                <!-- Stacked Card 1 -->
+                <div class="relative group cursor-pointer w-full md:w-[45%]" onclick="openModal('http://imgfz.com/i/Q1hNucK.jpeg')">
+                    <div class="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative glass-card rounded-3xl border-primary/30 overflow-hidden transform group-hover:-rotate-2 transition-transform duration-500
+                                before:absolute before:inset-0 before:bg-primary/5 before:-translate-x-2 before:-translate-y-2 before:-z-10 before:rounded-3xl before:border before:border-primary/20
+                                after:absolute after:inset-0 after:bg-primary/5 after:translate-x-4 after:translate-y-4 after:-z-20 after:rounded-3xl after:border after:border-primary/10">
+                        <img src="http://imgfz.com/i/Q1hNucK.jpeg" alt="Preview" class="w-full h-auto">
+                    </div>
+                    <!-- Floating Text -->
+                    <div class="absolute -top-6 -right-6 bg-black border border-primary/40 px-4 py-2 rounded-xl shadow-2xl animate-float-bounce">
+                        <span class="text-[9px] font-black uppercase text-primary">IA REAL-TIME</span>
+                    </div>
+                </div>
+
+                <!-- Stacked Card 2 -->
+                <div class="relative group cursor-pointer w-full md:w-[40%] mt-20" onclick="openModal('http://imgfz.com/i/q0JO1bj.jpeg')">
+                    <div class="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative glass-card rounded-3xl border-primary/30 overflow-hidden transform group-hover:rotate-3 transition-transform duration-500
+                                before:absolute before:inset-0 before:bg-primary/5 before:translate-x-3 before:-translate-y-3 before:-z-10 before:rounded-3xl before:border before:border-primary/20">
+                        <img src="http://imgfz.com/i/q0JO1bj.jpeg" alt="Preview" class="w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-black border border-primary/40 px-4 py-2 rounded-xl shadow-2xl animate-float-bounce">
+                        <span class="text-[9px] font-black uppercase text-primary">SEO OPTIMIZED</span>
+                    </div>
+                </div>
+
+                <!-- Small Stack 3 -->
+                <div class="relative group cursor-pointer w-full md:w-[30%]" onclick="openModal('http://imgfz.com/i/Jbiks7c.jpeg')">
+                    <div class="relative glass-card rounded-2xl border-primary/20 overflow-hidden transform group-hover:scale-105 transition-all">
+                        <img src="http://imgfz.com/i/Jbiks7c.jpeg" alt="Preview" class="w-full h-auto">
+                    </div>
+                    <div class="absolute top-1/2 -right-10 bg-primary text-black px-3 py-1 rounded-full text-[8px] font-black uppercase -rotate-12">
+                        LIVE SCORES
+                    </div>
+                </div>
+
+                <!-- Small Stack 4 -->
+                <div class="relative group cursor-pointer w-full md:w-[30%] -mt-10" onclick="openModal('http://imgfz.com/i/crQvlZU.jpeg')">
+                    <div class="relative glass-card rounded-2xl border-primary/20 overflow-hidden transform group-hover:-translate-y-4 transition-all">
+                        <img src="http://imgfz.com/i/crQvlZU.jpeg" alt="Preview" class="w-full h-auto">
+                    </div>
+                </div>
+                
+                <!-- Small Stack 5 -->
+                <div class="relative group cursor-pointer w-full md:w-[25%] mt-10" onclick="openModal('http://imgfz.com/i/wZKmECz.jpeg')">
+                    <div class="relative glass-card rounded-2xl border-primary/20 overflow-hidden">
+                        <img src="http://imgfz.com/i/wZKmECz.jpeg" alt="Preview" class="w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Image Modal -->
+        <div id="imageModal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-6" onclick="closeModal()">
+            <div class="relative max-w-6xl w-full">
+                <button class="absolute -top-12 right-0 text-white hover:text-primary transition-colors">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
+                <img id="modalImg" src="" alt="Full Preview" class="w-full rounded-2xl shadow-[0_0_100px_rgba(0,255,163,0.2)]">
+            </div>
+        </div>
+
+        <script>
+            function openModal(src) {
+                const modal = document.getElementById('imageModal');
+                const img = document.getElementById('modalImg');
+                img.src = src;
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('imageModal');
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        </script>
+
         <!-- Benefits Showcase -->
         <section class="max-w-7xl mx-auto px-6 mb-40">
             <div class="text-center mb-24">
