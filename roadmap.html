@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Progress — 10 Plataformas con IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#00ffa3',
+                            dark: '#00d689',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #0d1117;
+            --card: #0f0f0f;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-accent: rgba(0, 255, 163, 0.25);
+            --green: #00ffa3;
+            --green-dim: #00d689;
+            --green-glow: rgba(0, 255, 163, 0.15);
+            --purple: #8b5cf6;
+            --purple-dim: #6d28d9;
+            --amber: #f59e0b;
+            --blue: #38bdf8;
+            --red: #f87171;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-muted: #334155;
+            --mono: 'Space Mono', monospace;
+            --sans: 'Outfit', sans-serif;
+            --syne: 'Syne', sans-serif;
+        }
+
+        :root:not(.dark) {
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --card: #f1f5f9;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-accent: rgba(0, 255, 163, 0.3);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --progress-bg: rgba(0, 0, 0, 0.08);
+            --modal-overlay: rgba(255, 255, 255, 0.4);
+        }
+
+        .dark {
+            --bg: #050505;
+            --surface: #0d1117;
+            --card: #0f0f0f;
+            --border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --progress-bg: rgba(255, 255, 255, 0.1);
+            --modal-overlay: rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--sans);
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* ── GRID BG ── */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--modal-overlay);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .modal-card {
+            background: var(--card);
+            border: 1px solid var(--green);
+            box-shadow: 0 0 40px rgba(0, 255, 163, 0.15);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .modal-overlay.active .modal-card { transform: scale(1) translateY(0); }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .modal-body { padding: 24px; }
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .checklist { list-style: none; padding: 0; margin: 0; }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .checklist-item i { width: 16px; height: 16px; }
+        .checklist-item.done { color: var(--text-primary); font-weight: 600; }
+        .checklist-item.done i { color: var(--green); filter: drop-shadow(0 0 5px rgba(0, 255, 163, 0.3)); }
+        .checklist-item.pending { color: var(--text-muted); }
+        .checklist-item.pending i { color: var(--amber); opacity: 0.8; }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-modal-primary { background: var(--green); color: #000; }
+        .btn-modal-secondary { background: var(--surface); color: var(--text-secondary); border: 1px solid var(--border); }
+        .btn-modal:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+        .close-modal:hover { color: var(--red); }
+
+        /* ── WRAPPER ── */
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            padding-top: 120px; /* Offset for fixed header */
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 40px 0 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid var(--border-accent);
+            padding: 6px 14px;
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            color: var(--green);
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 span { color: var(--green); }
+
+        .hero p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* ── OVERALL STATS ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 80px;
+        }
+
+        .stat-cell {
+            background: var(--card);
+            padding: 28px 24px;
+            text-align: center;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-val {
+            font-family: var(--mono);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--green);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .section-header .line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-header .tag {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* ── CIRCULAR PROGRESS GRID ── */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 80px;
+        }
+
+        .platform-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 28px 20px 24px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border-radius: 20px;
+            z-index: 1;
+        }
+
+        /* Initial Top Border */
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            z-index: 2;
+        }
+
+        /* Border Trace Effect */
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: conic-gradient(from 0deg, transparent 60%, var(--accent));
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Inner Background Mask */
+        .platform-card .inner-mask {
+            position: absolute;
+            inset: 2px;
+            background: var(--card);
+            border-radius: 18px;
+            z-index: -1;
+        }
+
+        @keyframes rotateBorder {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .platform-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px -10px var(--accent);
+            transition: border-color 0.4s ease 1.2s, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .platform-card:hover::after {
+            opacity: 0; /* Hide initial top border during trace */
+        }
+
+        .platform-card:hover::before {
+            opacity: 1;
+            animation: rotateBorder 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .platform-card.featured::before {
+            background: conic-gradient(from 0deg, transparent 50%, var(--accent), transparent 100%);
+            opacity: 0.3; /* Base opacity for featured */
+        }
+        
+        .platform-card.featured:hover::before {
+            opacity: 1;
+        }
+
+        .platform-card.featured {
+            grid-column: span 2;
+            border-color: var(--border-accent);
+        }
+
+        .circle-wrap {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+        }
+
+        .platform-card.featured .circle-wrap {
+            width: 110px;
+            height: 110px;
+        }
+
+        .circle-wrap svg { transform: rotate(-90deg); }
+        .circle-bg { fill: none; stroke: var(--progress-bg); }
+        .circle-progress { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .circle-num {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .platform-card.featured .circle-num {
+            font-size: 20px;
+        }
+
+        .circle-num sub {
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .niche-num-badge {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 1.8rem;
+            height: 1.8rem;
+            background: var(--accent);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 800;
+            z-index: 10;
+        }
+
+        .platform-name {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .platform-card.featured .platform-name {
+            font-size: 16px;
+        }
+
+        .platform-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+
+        .niche-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 1.5rem;
+        }
+
+        .niche-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.2;
+        }
+
+        .niche-dot.active {
+            opacity: 1;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .platform-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: 1px solid currentColor;
+        }
+
+        .platform-status::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-live { color: var(--green); }
+        .status-wip { color: var(--amber); }
+        .status-soon { color: var(--text-muted); }
+
+        .futorbita-note {
+            font-size: 10px;
+            color: var(--green);
+            font-family: var(--mono);
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+
+        /* ── ROADMAP TIMELINE ── */
+        .roadmap {
+            position: relative;
+            margin-bottom: 80px;
+        }
+
+        .roadmap-line {
+            position: absolute;
+            left: 39px;
+            top: 20px;
+            bottom: 20px;
+            width: 1px;
+            background: linear-gradient(to bottom, var(--green) 15%, var(--border) 40%);
+        }
+
+        .roadmap-item {
+            display: flex;
+            gap: 28px;
+            margin-bottom: 24px;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .roadmap-dot-wrap {
+            width: 78px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .roadmap-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--dot-color, var(--border));
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .roadmap-dot::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--dot-color, var(--border));
+        }
+
+        .roadmap-idx {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: var(--text-muted);
+            letter-spacing: 0.06em;
+        }
+
+        .roadmap-content {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px 24px;
+            position: relative;
+            border-radius: 16px;
+        }
+
+        .roadmap-content.active {
+            border-color: var(--green);
+            background: rgba(0, 255, 163, 0.02);
+        }
+
+        .roadmap-content.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--green);
+        }
+
+        .roadmap-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .roadmap-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .roadmap-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .roadmap-pct {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--green);
+        }
+
+        .roadmap-bar-wrap {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .roadmap-bar {
+            height: 100%;
+            background: var(--bar-color, var(--green));
+            border-radius: 2px;
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .roadmap-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .roadmap-tag {
+            font-family: var(--mono);
+            font-size: 9px;
+            padding: 3px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .roadmap-tag.highlight {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* ── STACK SECTION ── */
+        .stack-section { margin-bottom: 80px; }
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .stack-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: border-color 0.2s;
+            border-radius: 12px;
+        }
+
+        .stack-item:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .stack-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .stack-name {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .stack-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            font-family: var(--mono);
+        }
+
+        .stack-bar-mini {
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .stack-bar-mini-fill {
+            height: 100%;
+            background: var(--tech-color, var(--green));
+            border-radius: 1px;
+        }
+
+        /* ── MUNDIAL BANNER ── */
+        .mundial-banner {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.08) 0%, rgba(0, 0, 0, 0) 60%);
+            border: 1px solid var(--border-accent);
+            padding: 32px 40px;
+            margin-bottom: 80px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .mundial-banner::after {
+            content: '⚽';
+            position: absolute;
+            right: 40px;
+            font-size: 80px;
+            opacity: 0.1;
+        }
+
+        .mundial-left { flex: 1; }
+
+        .mundial-eyebrow {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            color: var(--green);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .mundial-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .mundial-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 480px;
+        }
+
+        .mundial-stats {
+            display: flex;
+            gap: 32px;
+            flex-shrink: 0;
+        }
+
+        .mundial-stat { text-align: center; }
+
+        .mundial-stat-val {
+            font-family: var(--mono);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--green);
+            display: block;
+        }
+
+        .mundial-stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-family: var(--mono);
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            text-align: center;
+            padding: 60px 0 80px;
+            border-top: 1px solid var(--border);
+        }
+
+        .cta-section h2 {
+            font-size: clamp(28px, 5vw, 52px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--green);
+            color: #000;
+            font-family: var(--mono);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 16px 32px;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .cta-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .price-note {
+            display: block;
+            margin-top: 12px;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 48px 24px;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--green);
+            text-decoration: none;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .platforms-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .platform-card.featured {
+                grid-column: span 3;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .mundial-banner {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .mundial-banner::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .platforms-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .platform-card.featured {
+                grid-column: span 2;
+            }
+        }
+
+        /* ── ANIMATIONS ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased custom-scrollbar">
+    <div class="grid-bg"></div>
+
+    <!-- Header / Navbar -->
+    <header class="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
+        <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">10 Plataformas con IA</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <a href="index.html#plataformas" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Plataformas</a>
+                <a href="roadmap.html" class="hover:text-primary transition-colors uppercase tracking-widest text-xs font-bold text-primary">Roadmap Full</a>
+                <a href="index.html#precios" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Precios</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500 dark:text-gray-400">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+
+                <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-[10px] uppercase tracking-widest hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,255,163,0.3)]">
+                    Acceso de por vida
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Marquee / Ticker -->
+        <div class="w-full bg-black/5 dark:bg-white/5 border-t border-black/5 dark:border-white/5 py-2 overflow-hidden">
+            <div class="animate-scroll whitespace-nowrap">
+                <div class="inline-flex items-center gap-8 px-4">
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> FOOTBALL PRO: LIVE</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> CRYPTO AGENT: DEPLOYED</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> REVENUE SHARED: $12K+</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> NEXT DROP: TAROT IA</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> VIBE CODING SESSIONS: 24/7</span>
+                </div>
+                <!-- Duplicate for seamless scroll -->
+                <div class="inline-flex items-center gap-8 px-4">
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> FOOTBALL PRO: LIVE</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> CRYPTO AGENT: DEPLOYED</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> REVENUE SHARED: $12K+</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> NEXT DROP: TAROT IA</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> VIBE CODING SESSIONS: 24/7</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+
+        <!-- HERO -->
+        <section class="hero fade-in">
+            <div class="hero-badge">Build progress — live</div>
+            <h1>10 plataformas.<br><span>En construcción.</span></h1>
+            <p>Seguimiento en tiempo real del desarrollo. Cada barra es código real, deployado, funcionando.</p>
+        </section>
+
+        <!-- STATS -->
+        <div class="stats-row fade-in">
+            <div class="stat-cell">
+                <span class="stat-val">2</span>
+                <span class="stat-label">Apps en producción</span>
+            </div>
+            <div class="stat-cell">
+                <span class="stat-val">80%</span>
+                <span class="stat-label">Futorbita progress</span>
+            </div>
+            <div class="stat-cell">
+                <span class="stat-val">10</span>
+                <span class="stat-label">Nichos activos</span>
+            </div>
+            <div class="stat-cell">
+                <span class="stat-val">+100</span>
+                <span class="stat-label">Prompts incluidos</span>
+            </div>
+        </div>
+
+        <!-- CIRCULAR PROGRESS GRID -->
+        <section id="plataformas">
+            <div class="section-header fade-in">
+                <h2>Plataformas</h2>
+                <div class="line"></div>
+                <span class="tag">10 / 10 activas</span>
+            </div>
+
+            <div class="platforms-grid">
+                <!-- ⚽ FUTORBITA -->
+                <div class="platform-card fade-in" style="--accent: var(--green); --accent-rgb: 0, 255, 163;" onclick="openProjectModal('futorbita')">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">01</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="4" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="4"
+                                stroke-dasharray="219.91" stroke-dashoffset="43.98" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">80<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">FUTORBITA</h3>
+                    <p class="platform-desc">SEO + noticias en tiempo real para el Mundial 2026.</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- ₿ CRIPTO AGENT -->
+                <div class="platform-card fade-in" style="--accent: var(--purple); --accent-rgb: 139, 92, 246;" onclick="openProjectModal('crypto')">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">02</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="109.95" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">50<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">CRIPTO AGENT</h3>
+                    <p class="platform-desc">Analizador de sentimiento y alertas cripto 24/7.</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- 🃏 TAROT IA -->
+                <div class="platform-card fade-in" style="--accent: #a78bfa; --accent-rgb: 167, 139, 250;" onclick="openProjectModal('tarot')">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">03</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="153.94" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">30<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">TAROT IA</h3>
+                    <p class="platform-desc">Lectura de cartas personalizadas con Claude.</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- IA TOOLS -->
+                <div class="platform-card fade-in" style="--accent: var(--blue); --accent-rgb: 56, 189, 248;" onclick="openProjectModal('ia_tools')">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">04</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="197.92" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">10<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">IA TOOLS</h3>
+                    <p class="platform-desc">Directorio de herramientas IA automatizado.</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- FITNESS IA -->
+                <div class="platform-card fade-in" style="--accent: var(--amber); --accent-rgb: 251, 191, 36;" onclick="openProjectModal('fitness')">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">05</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="208.91" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">5<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">FITNESS IA</h3>
+                    <p class="platform-desc">Entrenador personal inteligente y generador de dietas.</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- TRAVEL IA -->
+                <div class="platform-card fade-in" style="--accent: #2dd4bf; --accent-rgb: 45, 212, 191;">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">06</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="219.91" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">0<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">TRAVEL IA</h3>
+                    <p class="platform-desc">Planes, destinos y agentes de viaje con IA</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- GASTRO IA -->
+                <div class="platform-card fade-in" style="--accent: #fb923c; --accent-rgb: 251, 146, 60;">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">07</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="219.91" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">0<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">GASTRO IA</h3>
+                    <p class="platform-desc">Recetas, restaurantes y experiencias</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- TECH REVIEWS -->
+                <div class="platform-card fade-in" style="--accent: var(--blue); --accent-rgb: 56, 189, 248;">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">08</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="219.91" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">0<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">TECH REVIEWS</h3>
+                    <p class="platform-desc">Reviews, comparativas y rankings</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- SPIRIT -->
+                <div class="platform-card fade-in" style="--accent: var(--purple); --accent-rgb: 139, 92, 246;">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">09</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="219.91" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">0<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">SPIRIT IA</h3>
+                    <p class="platform-desc">Contenido, comunidad y misterios</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+                <!-- ANIME -->
+                <div class="platform-card fade-in" style="--accent: #f472b6; --accent-rgb: 244, 114, 182;">
+                    <div class="inner-mask"></div>
+                    <div class="niche-num-badge">10</div>
+                    <div class="circle-wrap">
+                        <svg width="80" height="80" viewBox="0 0 80 80">
+                            <circle class="circle-bg" cx="40" cy="40" r="35" stroke-width="3" />
+                            <circle class="circle-progress" cx="40" cy="40" r="35" stroke="var(--accent)" stroke-width="3"
+                                stroke-dasharray="219.91" stroke-dashoffset="219.91" />
+                        </svg>
+                        <div class="circle-num" style="color: var(--accent)">0<sub>%</sub></div>
+                    </div>
+                    <h3 class="platform-name">ANIME TRACK</h3>
+                    <p class="platform-desc">Seguimiento, noticias y base de datos</p>
+                    <div class="niche-dots">
+                        <div class="niche-dot active"></div>
+                        <div class="niche-dot"></div>
+                        <div class="niche-dot"></div>
+                    </div>
+                </div>
+
+            </div><!-- /.platforms-grid -->
+        </section>
+
+        <!-- MUNDIAL BANNER -->
+        <div class="mundial-banner fade-in">
+            <div class="mundial-left">
+                <div class="mundial-eyebrow">🌍 Estrategia de tráfico</div>
+                <div class="mundial-title">Futorbita × Mundial 2026</div>
+                <div class="mundial-desc">
+                    Construyendo ahora para capturar el pico de búsquedas del evento deportivo más grande del planeta.
+                    SEO orgánico, cobertura de partidos en tiempo real, predicciones con IA y comunidad futbolera.
+                    El timing es la ventaja competitiva.
+                </div>
+            </div>
+            <div class="mundial-stats">
+                <div class="mundial-stat">
+                    <span class="mundial-stat-val">5B+</span>
+                    <span class="mundial-stat-label">Búsquedas esperadas</span>
+                </div>
+                <div class="mundial-stat">
+                    <span class="mundial-stat-val">80%</span>
+                    <span class="mundial-stat-label">Avance actual</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROADMAP -->
+        <section id="roadmap">
+            <div class="section-header fade-in">
+                <h2>Roadmap</h2>
+                <div class="line"></div>
+                <span class="tag">Build log</span>
+            </div>
+
+            <div class="roadmap fade-in">
+                <div class="roadmap-line"></div>
+
+                <!-- Item 1 — done -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot-wrap">
+                        <div class="roadmap-dot" style="--dot-color: var(--green)"></div>
+                        <span class="roadmap-idx">01</span>
+                    </div>
+                    <div class="roadmap-content active">
+                        <div class="roadmap-top">
+                            <div class="roadmap-title">⚽ Futorbita — Plataforma de Fútbol</div>
+                            <div class="roadmap-meta">
+                                <span class="roadmap-pct">80%</span>
+                                <span class="platform-status status-live">Live</span>
+                            </div>
+                        </div>
+                        <div class="roadmap-bar-wrap">
+                            <div class="roadmap-bar" style="width:80%;--bar-color:var(--green)"></div>
+                        </div>
+                        <div class="roadmap-tags">
+                            <span class="roadmap-tag highlight">Ruby on Rails</span>
+                            <span class="roadmap-tag highlight">PostgreSQL</span>
+                            <span class="roadmap-tag highlight">Stimulus</span>
+                            <span class="roadmap-tag">Resultados en tiempo real</span>
+                            <span class="roadmap-tag">Agente SEO</span>
+                            <span class="roadmap-tag">Noticias automáticas</span>
+                            <span class="roadmap-tag">Mundial 2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot-wrap">
+                        <div class="roadmap-dot" style="--dot-color: var(--purple)"></div>
+                        <span class="roadmap-idx">02</span>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-top">
+                            <div class="roadmap-title">₿ Cripto Agent — Sentiment Analysis</div>
+                            <div class="roadmap-meta">
+                                <span class="roadmap-pct" style="color:var(--purple)">50%</span>
+                                <span class="platform-status status-wip">En proceso</span>
+                            </div>
+                        </div>
+                        <div class="roadmap-bar-wrap">
+                            <div class="roadmap-bar" style="width:50%;--bar-color:var(--purple)"></div>
+                        </div>
+                        <div class="roadmap-tags">
+                            <span class="roadmap-tag highlight">Node.js</span>
+                            <span class="roadmap-tag highlight">Claude API</span>
+                            <span class="roadmap-tag">Alertas 24/7</span>
+                            <span class="roadmap-tag">Portafolio tracker</span>
+                            <span class="roadmap-tag">Fear & Greed Index</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot-wrap">
+                        <div class="roadmap-dot" style="--dot-color: #a78bfa"></div>
+                        <span class="roadmap-idx">03</span>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-top">
+                            <div class="roadmap-title">🃏 Tarot IA — Lecturas Personalizadas</div>
+                            <div class="roadmap-meta">
+                                <span class="roadmap-pct" style="color:#a78bfa">30%</span>
+                                <span class="platform-status status-wip">En proceso</span>
+                            </div>
+                        </div>
+                        <div class="roadmap-bar-wrap">
+                            <div class="roadmap-bar" style="width:30%;--bar-color:#a78bfa"></div>
+                        </div>
+                        <div class="roadmap-tags">
+                            <span class="roadmap-tag highlight">Flutter</span>
+                            <span class="roadmap-tag highlight">Rails API</span>
+                            <span class="roadmap-tag">Lecturas IA</span>
+                            <span class="roadmap-tag">Comunidad</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Items 4-10 collapsed -->
+                <div class="roadmap-item">
+                    <div class="roadmap-dot-wrap">
+                        <div class="roadmap-dot" style="--dot-color: var(--text-muted)"></div>
+                        <span class="roadmap-idx">04–10</span>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-top">
+                            <div class="roadmap-title">IA Tools · Fitness · Travel · Gastro · Tech · Spirit · Anime
+                            </div>
+                            <div class="roadmap-meta">
+                                <span class="roadmap-pct" style="color:var(--text-secondary)">5–20%</span>
+                                <span class="platform-status status-soon">Próximos</span>
+                            </div>
+                        </div>
+                        <div class="roadmap-bar-wrap">
+                            <div class="roadmap-bar" style="width:12%;--bar-color:var(--text-muted)"></div>
+                        </div>
+                        <div class="roadmap-tags">
+                            <span class="roadmap-tag">Construyendo en vivo</span>
+                            <span class="roadmap-tag">Acceso desde día 1</span>
+                            <span class="roadmap-tag">Actualizaciones continuas</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- STACK -->
+        <section id="stack">
+            <div class="section-header fade-in">
+                <h2>Stack tecnológico</h2>
+                <div class="line"></div>
+                <span class="tag">Antigravity System</span>
+            </div>
+
+            <div class="stack-grid">
+                <div class="stack-item fade-in" style="--tech-color: #cc0000">
+                    <div class="stack-icon">💎</div>
+                    <div class="stack-name">Ruby on Rails</div>
+                    <div class="stack-role">Backend · API · MVC estructurado</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:90%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: #42b883">
+                    <div class="stack-icon">💚</div>
+                    <div class="stack-name">Vue.js</div>
+                    <div class="stack-role">Frontend reactivo · SPA</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:85%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: #339933">
+                    <div class="stack-icon">⬢</div>
+                    <div class="stack-name">Node.js</div>
+                    <div class="stack-role">Agentes · Servicios async</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:75%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: #336791">
+                    <div class="stack-icon">🐘</div>
+                    <div class="stack-name">PostgreSQL</div>
+                    <div class="stack-role">Database · Persistencia</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:90%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: #fcc700">
+                    <div class="stack-icon">⚡</div>
+                    <div class="stack-name">Stimulus</div>
+                    <div class="stack-role">Interatividad JS · CDN</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:85%"></div>
+                    </div>
+                </div>
+
+                <div class="stack-item fade-in" style="--tech-color: var(--green)">
+                    <div class="stack-icon">🐙</div>
+                    <div class="stack-name">GitHub</div>
+                    <div class="stack-role">Version control · CI/CD</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:95%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: #38bdf8">
+                    <div class="stack-icon">🌊</div>
+                    <div class="stack-name">Tailwind CSS</div>
+                    <div class="stack-role">UI / Design system</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:90%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: var(--purple)">
+                    <div class="stack-icon">🧠</div>
+                    <div class="stack-name">Claude API</div>
+                    <div class="stack-role">IA · Agentes · Generación</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:80%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: #06b6d4">
+                    <div class="stack-icon">🔷</div>
+                    <div class="stack-name">Flutter</div>
+                    <div class="stack-role">Apps móviles · Cross-platform</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:60%"></div>
+                    </div>
+                </div>
+                <div class="stack-item fade-in" style="--tech-color: var(--amber)">
+                    <div class="stack-icon">🚀</div>
+                    <div class="stack-name">Render / Railway</div>
+                    <div class="stack-role">Deploy · Hosting producción</div>
+                    <div class="stack-bar-mini">
+                        <div class="stack-bar-mini-fill" style="width:85%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Antigravity callout -->
+            <div style="margin-top:16px;background:var(--card);border:1px solid var(--border-accent);padding:20px 24px;display:flex;align-items:center;gap:16px;">
+                <div style="font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">Antigravity</div>
+                <div style="width:1px;height:32px;background:var(--border)"></div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">
+                    Arquitectura de 4 capas que da estructura a cada proyecto: <strong style="color:var(--text-primary)">Datos → Lógica → API → UI.</strong>
+                    El sistema que hace que el vibe coding no sea caos sino producto real.
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section fade-in">
+            <h2>Únete al maratón<br><span style="color:var(--green)">mientras se construye.</span></h2>
+            <p>Acceso a las 10 plataformas · Código fuente · +100 prompts · Comunidad privada</p>
+            <a href="https://ko-fi.com/s/694308f582" class="cta-btn">
+                Obtener acceso completo — $97 USD →
+            </a>
+            <span class="price-note">Pago único · Sin suscripciones · Acceso de por vida</span>
+        </section>
+
+    </div><!-- /.wrapper -->
+
+    <!-- PROJECT DETAILS MODAL -->
+    <div id="project-modal" class="modal-overlay" onclick="closeProjectModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div id="modal-circle-wrap" class="circle-wrap" style="margin: 0; width: 64px; height: 64px;">
+                        <svg width="64" height="64" viewBox="0 0 64 64">
+                            <circle class="circle-bg" cx="32" cy="32" r="28" stroke-width="3" />
+                            <circle id="modal-circle-progress" class="circle-progress" cx="32" cy="32" r="28" stroke="var(--green)" stroke-width="3"
+                                stroke-dasharray="175.93" stroke-dashoffset="175.93" />
+                        </svg>
+                        <div id="modal-circle-num" class="circle-num" style="font-size: 12px;">0<sub>%</sub></div>
+                    </div>
+                    <div>
+                        <h3 id="modal-project-title" style="font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Project Name</h3>
+                        <p id="modal-project-desc" style="font-size: 12px; color: var(--text-secondary);">Short description of the project.</p>
+                    </div>
+                </div>
+                <button class="close-modal" onclick="closeProjectModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); margin-bottom: 16px;">Checklist de Implementación</h4>
+                <div id="modal-checklist" class="checklist">
+                    <!-- Items injected via JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-secondary" onclick="closeProjectModal()">Cerrar</button>
+                <a id="modal-project-link" href="#" class="btn-modal btn-modal-primary">Ver Proyecto Full →</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="index.html">← Volver al inicio</a>
+        &nbsp;·&nbsp;
+        <a href="https://t.me/+e_23a6AooN44NGE5">Telegram privado</a>
+        &nbsp;·&nbsp;
+        © 2026 Vibe Coding Marathon
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Theme Toggle
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        
+        // Initial theme check
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlElement.classList.add('dark');
+        } else {
+            htmlElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Project Modal Logic
+        const projectData = {
+            futorbita: {
+                title: "⚽ Futorbita",
+                desc: "SEO + noticias en tiempo real para el Mundial 2026.",
+                link: "futorbita.html",
+                pct: 80,
+                color: "#00ffa3",
+                checklist: [
+                    { text: "Consumo de API Real (Sofascore)", status: "done" },
+                    { text: "Marcadores Live y Marcadores Históricos", status: "done" },
+                    { text: "Ligas, Categorías y Subcategorías", status: "done" },
+                    { text: "Buen SEO (Meta tags dinámicos)", status: "done" },
+                    { text: "Registro y Login Pro (Devise)", status: "done" },
+                    { text: "Diseño 100% Responsive Premium", status: "done" },
+                    { text: "Generación de Artículos con IA (Claude)", status: "done" },
+                    { text: "PostgreSQL Database (Producción)", status: "done" },
+                    { text: "Stimulus JS Interactivity", status: "done" }
+                ]
+            },
+            crypto: {
+                title: "₿ Cripto Agent",
+                desc: "Analizador de sentimiento y alertas cripto 24/7.",
+                link: "#",
+                pct: 50,
+                color: "#a78bfa",
+                checklist: [
+                    { text: "Integración con Binance API", status: "pending" },
+                    { text: "Análisis de Sentimiento (Claude IA)", status: "done" },
+                    { text: "Alertas vía Telegram (Bot)", status: "pending" },
+                    { text: "Dashboard de Ballenas", status: "pending" },
+                    { text: "PostgreSQL & Redis", status: "done" }
+                ]
+            },
+            tarot: {
+                title: "🃏 Tarot IA",
+                desc: "Lectura de cartas personalizadas con Claude.",
+                link: "#",
+                pct: 30,
+                color: "#818cf8",
+                checklist: [
+                    { text: "Motor de Interpretación IA", status: "done" },
+                    { text: "Generación de Imágenes de Cartas", status: "pending" },
+                    { text: "Historial de Lecturas", status: "pending" },
+                    { text: "Suscripción Premium", status: "pending" }
+                ]
+            },
+            ia_tools: {
+                title: "🤖 IA Tools",
+                desc: "Directorio de herramientas IA automatizado.",
+                link: "#",
+                pct: 10,
+                color: "#38bdf8",
+                checklist: [
+                    { text: "Crawler de Herramientas", status: "pending" },
+                    { text: "Sistema de Votación", status: "pending" },
+                    { text: "Newsletter Automática", status: "pending" }
+                ]
+            },
+            fitness: {
+                title: "💪 Fitness AI",
+                desc: "Entrenador personal inteligente y generador de dietas.",
+                link: "#",
+                pct: 5,
+                color: "#fbbf24",
+                checklist: [
+                    { text: "Algoritmo de Planificación", status: "pending" },
+                    { text: "Tracking de Macros", status: "pending" },
+                    { text: "Chatbot de Motivación", status: "pending" }
+                ]
+            }
+        };
+
+        function openProjectModal(id) {
+            const data = projectData[id];
+            if (!data) return;
+
+            document.getElementById('modal-project-title').textContent = data.title;
+            document.getElementById('modal-project-desc').textContent = data.desc;
+            document.getElementById('modal-project-link').href = data.link;
+            
+            // Set Modal Progress
+            const circle = document.getElementById('modal-circle-progress');
+            const num = document.getElementById('modal-circle-num');
+            const pct = data.pct;
+            const r = 28;
+            const circ = 2 * Math.PI * r;
+            const offset = circ * (1 - pct / 100);
+            
+            circle.style.stroke = data.color || 'var(--green)';
+            circle.style.strokeDashoffset = circ;
+            num.textContent = `${pct}%`;
+            num.style.color = data.color || 'var(--green)';
+
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 100);
+
+            const checklistEl = document.getElementById('modal-checklist');
+            checklistEl.innerHTML = '';
+
+            data.checklist.forEach(item => {
+                const li = document.createElement('div');
+                li.className = `checklist-item ${item.status}`;
+                li.innerHTML = `
+                    <i data-lucide="${item.status === 'done' ? 'check-circle' : 'circle'}"></i>
+                    <span>${item.text}</span>
+                `;
+                checklistEl.appendChild(li);
+            });
+
+            document.getElementById('project-modal').classList.add('active');
+            lucide.createIcons();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeProjectModal(event) {
+            if (event && event.target !== event.currentTarget && event.target.closest('.modal-card')) return;
+            document.getElementById('project-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Intersection observer for fade-in
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Animate circles on scroll
+        const circleObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const circles = entry.target.querySelectorAll('.circle-progress[data-pct]');
+                    circles.forEach(circle => {
+                        const r = parseFloat(circle.getAttribute('r'));
+                        const circ = 2 * Math.PI * r;
+                        const pct = parseInt(circle.dataset.pct) / 100;
+                        const offset = circ * (1 - pct);
+                        circle.style.strokeDashoffset = circ;
+                        requestAnimationFrame(() => {
+                            setTimeout(() => {
+                                circle.style.strokeDashoffset = offset;
+                            }, 100);
+                        });
+                    });
+                    circleObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.platforms-grid').forEach(el => circleObserver.observe(el));
+
+        // Roadmap bars animate on scroll
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.roadmap-bar');
+                    bars.forEach(bar => {
+                        const w = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => { bar.style.width = w; }, 200);
+                    });
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.roadmap').forEach(el => barObserver.observe(el));
+    </script>
+</body>
+
+</html>

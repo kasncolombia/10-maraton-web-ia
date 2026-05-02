@@ -12,7 +12,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -170,7 +170,280 @@
         * {
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
+
+        /* Niches Section Redesign */
+        .niche-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .niche-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 1280px) {
+            .niche-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+
+        .niche-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            z-index: 1;
+        }
+
+
+        .dark .niche-card {
+            background: #0d0d0d;
+            border-color: rgba(255, 255, 255, 0.03);
+            box-shadow: none;
+        }
+
+        /* Active Card Style (for first two niches) */
+        .niche-card-active {
+            border-color: var(--neon) !important;
+            box-shadow: 0 0 20px rgba(0, 255, 163, 0.1) !important;
+            animation: border-glow-pulse 4s ease-in-out infinite;
+        }
+        
+        .dark .niche-card-active {
+            box-shadow: 0 0 30px rgba(0, 255, 163, 0.05) !important;
+            border-color: rgba(0, 255, 163, 0.4) !important;
+        }
+
+        @keyframes border-glow-pulse {
+            0%, 100% { border-color: rgba(0, 255, 163, 0.4); box-shadow: 0 0 15px rgba(0, 255, 163, 0.1); }
+            50% { border-color: rgba(0, 255, 163, 1); box-shadow: 0 0 30px rgba(0, 255, 163, 0.2); }
+        }
+
+        .niche-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px -10px var(--accent-glow);
+        }
+
+        .niche-card-active:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -10px var(--accent-glow) !important;
+        }
+
+        /* Initial Top Border */
+        .niche-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+
+        .niche-card:hover::after {
+            opacity: 0;
+        }
+
+        /* Border Trace Effect */
+        .niche-card::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: conic-gradient(from 0deg, transparent 60%, var(--accent));
+            border-radius: 1.5rem;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .niche-card:hover::before {
+            opacity: 1;
+            animation: rotateBorder 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes rotateBorder {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Inner Background Mask to keep content clean */
+        .niche-card-bg-mask {
+            position: absolute;
+            inset: 2px;
+            background: var(--card-bg);
+            border-radius: calc(1.5rem - 2px);
+            z-index: 0;
+        }
+
+        /* Diagonal Sweep Field Effect - Triggered on Hover */
+        .niche-card {
+            perspective: 1000px;
+        }
+
+        .field-overlay {
+            position: absolute;
+            inset: -100%;
+            width: 300%;
+            height: 300%;
+            pointer-events: none;
+            z-index: 1;
+            display: flex;
+            gap: 0;
+            transform: rotate(-45deg);
+            transform-origin: center;
+            opacity: 0;
+            transition: opacity 0.4s ease, background-color 0.6s ease;
+            background-color: transparent;
+        }
+
+        .niche-card:hover .field-overlay {
+            opacity: 1;
+            background-color: rgba(0, 255, 135, 0.05);
+        }
+
+        .stripe {
+            flex: 1;
+            height: 100%;
+            background: rgba(0, 255, 135, 0.12);
+            transform: translateX(-100%);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stripe:nth-child(even) {
+            background: rgba(0, 255, 135, 0.04);
+        }
+
+        .niche-card:hover .stripe {
+            transform: translateX(0);
+            animation: grass-sway 4s ease-in-out infinite alternate 0.6s;
+        }
+
+        @keyframes grass-sway {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(10px); }
+        }
+
+        .niche-card-inner {
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            height: 100%;
+        }
+
+        .niche-card:hover .niche-card-inner {
+            transform: rotateY(-8deg) scale(1.02);
+        }
+
+        /* Badge Pop on Hover */
+        .niche-badge {
+            transform: scale(0);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .niche-card:hover .niche-badge {
+            transform: scale(1);
+            transition-delay: 0.3s;
+        }
+
+        .niche-card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .dark .stripe {
+            background: rgba(0, 255, 135, 0.08);
+        }
+        .dark .stripe:nth-child(even) {
+            background: rgba(0, 255, 135, 0.02);
+        }
+
+
+
+
+
+        .niche-icon-wrapper {
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            transition: all 0.3s ease;
+            background: rgba(var(--accent-rgb), 0.1);
+            border: 1px solid rgba(var(--accent-rgb), 0.2);
+            box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.15);
+            position: relative;
+        }
+
+        .niche-card:hover .niche-icon-wrapper {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.3);
+        }
+
+        .niche-num-badge {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 1.8rem;
+            height: 1.8rem;
+            background: var(--accent);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 800;
+            z-index: 10;
+        }
+
+        .niche-card h3 {
+            color: var(--accent);
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin-bottom: 0.75rem;
+        }
+
+        .niche-card p {
+            text-align: center;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .niche-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 1.5rem;
+        }
+
+        .niche-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.2;
+        }
+
+        .niche-dot.active {
+            opacity: 1;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
     </style>
+
+
 </head>
 <body class="font-sans antialiased custom-scrollbar">
 
@@ -180,12 +453,13 @@
     <header class="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">10 Plataformas con IA</span>
+                <a href="index.html" class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">10 Plataformas con IA</a>
             </div>
+
 
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500 dark:text-gray-400">
                 <a href="#plataformas" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Plataformas</a>
-                <a href="#demo" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Demos</a>
+                <a href="roadmap.html" class="hover:text-primary transition-colors uppercase tracking-widest text-xs font-bold text-primary">Roadmap Full</a>
                 <a href="#precios" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Precios</a>
             </div>
 
@@ -336,169 +610,347 @@
             </div>
         </section>
 
-        <!-- Niches Grid -->
-        <section id="plataformas" class="max-w-7xl mx-auto px-6 mb-40">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4 uppercase">
-                    10 NICHOS <span class="text-yellow-400">GANADORES</span>
+        <!-- 10 NICHOS GANADORES -->
+        <section id="plataformas" class="max-w-[1400px] mx-auto px-6 mb-40 relative">
+            <!-- Decorative connection lines for light mode -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-40 pointer-events-none opacity-20 hidden lg:block">
+                <svg width="100%" height="100%" viewBox="0 0 1200 150" fill="none" xmlns="http://www.w3.org/2000/svg" class="stroke-gray-300 dark:stroke-primary/20">
+                    <path d="M600 0V50M600 50C600 50 600 100 400 100H100V150M600 50C600 50 600 100 800 100H1100V150" stroke-width="1" stroke-dasharray="4 4"/>
+                </svg>
+            </div>
+
+            <div class="text-center mb-20 relative z-10">
+                <div class="inline-block px-4 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] font-bold uppercase tracking-widest mb-6">
+                    10 Oportunidades • Infinitas Posibilidades
+                </div>
+                <h2 class="text-5xl md:text-7xl font-black tracking-tighter mb-4 uppercase flex flex-col md:flex-row items-center justify-center gap-4">
+                    10 NICHOS <span class="text-[#facc15]">GANADORES</span>
                 </h2>
-                <p class="text-gray-500 dark:text-gray-400 max-w-xl mx-auto">Dominaremos cada sector con aplicaciones potenciadas por agentes de IA.</p>
+                <p class="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-light text-lg">
+                    Plataformas potentes impulsadas por IA para dominar cada sector
+                </p>
+            </div>
+            
+            <div class="niche-grid">
+                <!-- Niche 1: Fútbol -->
+                <div class="niche-card niche-card-active fade-in" style="--accent: #00ffa3; --accent-rgb: 0, 255, 163; --accent-glow: rgba(0, 255, 163, 0.2);" onclick="window.location.href='futorbita.html'">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">01</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="trophy" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">FÚTBOL</h3>
+                            <p class="leading-relaxed font-light">
+                                Estadísticas, predicciones, comunidad y más
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <!-- Niche 2: Cripto -->
+                <div class="niche-card niche-card-active fade-in" style="--accent: #a78bfa; --accent-rgb: 167, 139, 250; --accent-glow: rgba(167, 139, 250, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">02</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="bitcoin" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">CRIPTO</h3>
+                            <p class="leading-relaxed font-light">
+                                Análisis, alertas, portafolio y sentimiento
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Niche 3: IA Tools -->
+                <div class="niche-card fade-in" style="--accent: #38bdf8; --accent-rgb: 56, 189, 248; --accent-glow: rgba(56, 189, 248, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">03</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="cpu" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">IA TOOLS</h3>
+                            <p class="leading-relaxed font-light">
+                                Herramientas, workflows y automatizaciones
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 4: Tarot -->
+                <div class="niche-card fade-in" style="--accent: #818cf8; --accent-rgb: 129, 140, 248; --accent-glow: rgba(129, 140, 248, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">04</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="sparkles" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">TAROT</h3>
+                            <p class="leading-relaxed font-light">
+                                Lecturas, interpretación y comunidad
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 5: Fitness -->
+                <div class="niche-card fade-in" style="--accent: #fbbf24; --accent-rgb: 251, 191, 36; --accent-glow: rgba(251, 191, 36, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">05</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="dumbbell" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">FITNESS</h3>
+                            <p class="leading-relaxed font-light">
+                                Planes, seguimiento y coach con IA
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 6: Travel IA -->
+                <div class="niche-card fade-in" style="--accent: #2dd4bf; --accent-rgb: 45, 212, 191; --accent-glow: rgba(45, 212, 191, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">06</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="plane" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">TRAVEL IA</h3>
+                            <p class="leading-relaxed font-light">
+                                Planes, destinos y agentes de viaje con IA
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 7: Gastro IA -->
+                <div class="niche-card fade-in" style="--accent: #fb923c; --accent-rgb: 251, 146, 60; --accent-glow: rgba(251, 146, 60, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">07</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="utensils" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">GASTRO IA</h3>
+                            <p class="leading-relaxed font-light">
+                                Recetas, restaurantes y experiencias
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 8: Tech Reviews -->
+                <div class="niche-card fade-in" style="--accent: #818cf8; --accent-rgb: 129, 140, 248; --accent-glow: rgba(129, 140, 248, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">08</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="monitor" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">TECH REVIEWS</h3>
+                            <p class="leading-relaxed font-light">
+                                Reviews, comparativas y rankings
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 9: Spirit IA -->
+                <div class="niche-card fade-in" style="--accent: #2dd4bf; --accent-rgb: 45, 212, 191; --accent-glow: rgba(45, 212, 191, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">09</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="ghost" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">SPIRIT IA</h3>
+                            <p class="leading-relaxed font-light">
+                                Contenido, comunidad y misterios
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Niche 10: Anime Track -->
+                <div class="niche-card fade-in" style="--accent: #f472b6; --accent-rgb: 244, 114, 182; --accent-glow: rgba(244, 114, 182, 0.2);">
+                    <div class="niche-card-bg-mask"></div>
+                    <div class="niche-num-badge">10</div>
+                    <div class="field-overlay">
+                        <div class="stripe" style="animation-delay: 0.1s"></div>
+                        <div class="stripe" style="animation-delay: 0.2s"></div>
+                        <div class="stripe" style="animation-delay: 0.3s"></div>
+                        <div class="stripe" style="animation-delay: 0.4s"></div>
+                        <div class="stripe" style="animation-delay: 0.5s"></div>
+                        <div class="stripe" style="animation-delay: 0.6s"></div>
+                    </div>
+                    <div class="niche-card-inner h-full flex flex-col justify-center items-center">
+                        <div class="niche-card-content h-full flex flex-col justify-center items-center">
+                            <div class="niche-icon-wrapper">
+                                <i data-lucide="clapperboard" class="w-8 h-8" style="color: var(--accent)"></i>
+                            </div>
+                            <h3 class="uppercase tracking-tighter">ANIME TRACK</h3>
+                            <p class="leading-relaxed font-light">
+                                Seguimiento, noticias y base de datos
+                            </p>
+                            <div class="niche-dots">
+                                <div class="niche-dot active"></div>
+                                <div class="niche-dot"></div>
+                                <div class="niche-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-24">
-                <!-- Niche Card 1: Football (Advanced Showcase) -->
-                <a href="futorbita.html" class="glass-card p-6 rounded-xl border-primary/50 bg-primary/5 hover:border-primary transition-all group relative overflow-hidden">
-                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition-all"></div>
-                    <div class="flex justify-between items-start mb-6">
-                        <i data-lucide="football" class="text-primary w-10 h-10"></i>
-                        <span class="text-[8px] bg-primary text-black px-2 py-0.5 rounded-full font-black uppercase">ADVANCED</span>
-                    </div>
-                    <h4 class="text-lg font-black mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">FOOTBALL PRO</h4>
-                    <p class="text-[9px] text-primary/80 dark:text-primary/80 uppercase font-bold tracking-widest mb-4">Scoreboard + Social + SEO</p>
-                    <div class="flex gap-1">
-                        <div class="w-1 h-1 bg-primary rounded-full"></div>
-                        <div class="w-1 h-1 bg-primary rounded-full"></div>
-                        <div class="w-1 h-1 bg-primary rounded-full"></div>
-                    </div>
+            <!-- View Full Roadmap Call-to-Action -->
+            <div class="mt-20 text-center relative z-10">
+                <a href="roadmap.html" class="inline-flex items-center gap-4 px-8 py-4 border border-primary/30 rounded-full hover:bg-primary/5 transition-all group">
+                    <span class="text-xs font-black uppercase tracking-widest">Ver el Roadmap completo de las 10 Apps</span>
+                    <i data-lucide="layout-panel" class="text-primary w-5 h-5 group-hover:rotate-12 transition-transform"></i>
                 </a>
-                
-                <!-- Niche Card 2: Crypto (Advanced) -->
-                <div class="glass-card p-6 rounded-xl border-primary/50 bg-primary/5 hover:border-primary transition-all group relative overflow-hidden">
-                    <div class="flex justify-between items-start mb-6">
-                        <i data-lucide="bitcoin" class="text-primary w-10 h-10"></i>
-                        <span class="text-[8px] bg-primary text-black px-2 py-0.5 rounded-full font-black uppercase">ADVANCED</span>
-                    </div>
-                    <h4 class="text-lg font-black mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">CRYPTO AGENT</h4>
-                    <p class="text-[9px] text-primary/80 dark:text-primary/80 uppercase font-bold tracking-widest">Sentiment Analysis</p>
-                </div>
-
-                <!-- Niche Card 3: Tarot (New) -->
-                <div class="glass-card p-6 rounded-xl hover:border-primary transition-all group relative">
-                    <div class="flex justify-between items-start mb-6">
-                        <i data-lucide="sparkles" class="text-primary w-8 h-8"></i>
-                        <span class="text-[8px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold uppercase">NEW</span>
-                    </div>
-                    <h4 class="text-sm font-bold mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">TAROT IA</h4>
-                    <p class="text-[9px] text-gray-500 dark:text-gray-500 uppercase font-bold tracking-widest">Flutter App</p>
-                </div>
-
-                <!-- Niche Card 4: Fitness (New) -->
-                <div class="glass-card p-6 rounded-xl hover:border-primary transition-all group relative">
-                    <div class="flex justify-between items-start mb-6">
-                        <i data-lucide="dumbbell" class="text-primary w-8 h-8"></i>
-                        <span class="text-[8px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-bold uppercase">NEW</span>
-                    </div>
-                    <h4 class="text-sm font-bold mb-1 uppercase tracking-tighter text-gray-900 dark:text-white">FITNESS COACH</h4>
-                    <p class="text-[9px] text-gray-500 dark:text-gray-500 uppercase font-bold tracking-widest">Flutter App</p>
-                </div>
-
-                <!-- Niche Card 5: IA Tools -->
-                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
-                    <i data-lucide="cpu" class="text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">IA TOOLS</h4>
-                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Workflows</p>
-                </div>
-
-                <!-- Niche Card 6: Tourism -->
-                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
-                    <i data-lucide="globe" class="text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">TRAVEL IA</h4>
-                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Planner</p>
-                </div>
-
-                <!-- Niche Card 7: Gastro -->
-                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
-                    <i data-lucide="utensils" class="text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">GASTRO AI</h4>
-                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Discovery</p>
-                </div>
-
-                <!-- Niche Card 8: Gadgets -->
-                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
-                    <i data-lucide="smartphone" class="text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">TECH REVIEWS</h4>
-                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Automation</p>
-                </div>
-
-                <!-- Niche Card 9: Religion -->
-                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
-                    <i data-lucide="church" class="text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">SPIRIT IA</h4>
-                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Community</p>
-                </div>
-
-                <!-- Niche Card 10: Anime -->
-                <div class="glass-card p-6 rounded-xl border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 transition-all group opacity-60">
-                    <i data-lucide="clapperboard" class="text-gray-500 w-8 h-8 mb-6"></i>
-                    <h4 class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-tighter">ANIME TRACK</h4>
-                    <p class="text-[9px] text-gray-600 dark:text-gray-600 uppercase font-bold tracking-widest">Database</p>
-                </div>
-            </div>
-
-            <!-- New Platform Demo Showcase (Inspired by Futorbita layout) -->
-            <div class="relative mt-32">
-                <!-- Neon Aura -->
-                <div class="absolute inset-0 bg-[#00ffa3]/5 blur-[120px] -z-10 rounded-full"></div>
-                
-                <div class="text-center mb-16">
-                    <h3 class="text-2xl md:text-4xl font-black tracking-tighter uppercase mb-4">Avance Real de las <span class="text-primary">Plataformas</span></h3>
-                    <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em]">Mira cómo estamos construyendo el futuro</p>
-                </div>
-
-                <div class="grid lg:grid-cols-12 gap-8 items-start">
-                    <!-- Left Roadmap (The 10 slots) -->
-                    <div class="lg:col-span-4 space-y-4">
-                        <div class="glass-card p-6 rounded-2xl border-primary/30 bg-primary/5">
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="text-[10px] font-black text-primary uppercase tracking-widest">01 · Football Pro</span>
-                                <span class="text-[10px] bg-primary text-black px-2 py-0.5 rounded-full font-black">ACTIVA</span>
-                            </div>
-                            <p class="text-[11px] text-gray-400 leading-relaxed mb-4">Plataforma avanzada con resultados en tiempo real y agentes de noticias SEO.</p>
-                            <div class="w-full bg-black/40 h-1 rounded-full overflow-hidden">
-                                <div class="bg-primary h-full" style="width: 70%"></div>
-                            </div>
-                        </div>
-
-                        <!-- Placeholders for others (Hidden for now to avoid empty space) 
-                        <div class="grid grid-cols-3 gap-3">
-                            <div class="aspect-square glass-card rounded-xl flex items-center justify-center border-dashed border-white/5 opacity-30 hover:opacity-100 transition-opacity group">
-                                <span class="text-[10px] font-bold text-gray-500 group-hover:text-primary transition-colors">02</span>
-                            </div>
-                            ... (rest of the placeholders)
-                        </div>
-                        -->
-                    </div>
-
-                    <!-- Right Video Display -->
-                    <div class="lg:col-span-8">
-                        <div class="glass-card p-4 rounded-[2.5rem] border-primary/20 shadow-[0_0_80px_rgba(0,255,163,0.15)] relative overflow-hidden group">
-                            <div class="absolute inset-0 bg-[#00ffa3]/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                            
-                            <div class="relative aspect-video rounded-[1.8rem] overflow-hidden bg-black shadow-2xl">
-                                <iframe 
-                                    class="w-full h-full" 
-                                    src="https://www.youtube.com/embed/11cwuDpzp1I?autoplay=0&mute=1&controls=1" 
-                                    title="Football Pro Demo" 
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                    allowfullscreen>
-                                </iframe>
-                                
-                                <!-- Floating Status Label -->
-                                <div class="absolute top-6 left-6 bg-black/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2">
-                                    <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                                    <span class="text-[10px] font-black uppercase text-white">Demo Actual: v2.4</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-8 flex items-center justify-between px-6">
-                            <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest italic">Captura directa del servidor de desarrollo</p>
-                            <a href="futorbita.html" class="text-primary text-[10px] font-black uppercase tracking-widest hover:underline">Ver detalles técnicos →</a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
+
+
+
 
         <!-- Pricing Section -->
         <section id="precios" class="max-w-4xl mx-auto px-6 mb-32 text-center">
@@ -621,6 +1073,25 @@
                 stickyCta.classList.remove('visible');
             }
         });
+
+        // Roadmap & Animations Logic
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
+
+
 </body>
 </html>

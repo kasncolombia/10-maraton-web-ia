@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -170,31 +170,157 @@
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
+
+        /* Roadmap Specific Styles */
+        :root {
+            --text-secondary-opacity: rgba(0, 0, 0, 0.6);
+            --text-muted: #94a3b8;
+            --mono: 'Space Mono', monospace;
+        }
+
+        .dark {
+            --text-secondary-opacity: rgba(255, 255, 255, 0.6);
+            --text-muted: #334155;
+        }
+
+        .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
+        .section-header h2 { font-size: 22px; font-weight: 700; }
+        .section-header .line { flex: 1; height: 1px; background: var(--border-color); }
+        .section-header .tag { font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .stat-cell { background: var(--card-bg); padding: 28px 24px; text-align: center; }
+        .stat-val { font-family: var(--mono); font-size: 32px; font-weight: 700; color: var(--neon); display: block; margin-bottom: 6px; }
+        .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary-opacity); }
+
+        .platforms-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 80px; }
+        .platform-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 28px 20px 24px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.3s, transform 0.2s;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .platform-card:hover { border-color: var(--neon); transform: translateY(-2px); }
+        .platform-card.featured { border-color: var(--neon); grid-column: span 2; }
+        
+        .circle-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 16px; }
+        .platform-card.featured .circle-wrap { width: 110px; height: 110px; }
+        .circle-wrap svg { transform: rotate(-90deg); }
+        .circle-bg { fill: none; stroke: var(--border-color); }
+        .circle-progress { fill: none; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .circle-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--mono); font-size: 15px; font-weight: 700; }
+        .circle-num sub { font-size: 9px; opacity: 0.6; margin-top: 2px; }
+        
+        .platform-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
+        .platform-desc { font-size: 11px; color: var(--text-secondary-opacity); line-height: 1.5; }
+        .platform-status { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-family: var(--mono); font-size: 9px; text-transform: uppercase; padding: 3px 8px; border: 1px solid currentColor; }
+        .status-live { color: var(--neon); }
+        .status-wip { color: var(--amber); }
+        .status-soon { color: var(--text-muted); }
+
+        .roadmap { position: relative; margin-bottom: 80px; }
+        .roadmap-line { position: absolute; left: 39px; top: 20px; bottom: 20px; width: 1px; background: linear-gradient(to bottom, var(--neon) 15%, var(--border-color) 40%); }
+        .roadmap-item { display: flex; gap: 28px; margin-bottom: 24px; align-items: flex-start; position: relative; }
+        .roadmap-dot-wrap { width: 78px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 1; }
+        .roadmap-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--dot-color, var(--border-color)); background: var(--bg-color); display: flex; align-items: center; justify-content: center; }
+        .roadmap-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--dot-color, var(--border-color)); }
+        .roadmap-content { flex: 1; background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px 24px; border-radius: 12px; }
+        .roadmap-content.active { border-left: 4px solid var(--neon); }
+        .roadmap-title { font-size: 15px; font-weight: 700; }
+        .roadmap-bar-wrap { height: 4px; background: var(--border-color); border-radius: 2px; overflow: hidden; margin: 12px 0; }
+        .roadmap-bar { height: 100%; background: var(--bar-color, var(--neon)); transition: width 1.5s ease; }
+        .roadmap-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .roadmap-tag { font-family: var(--mono); font-size: 9px; padding: 3px 8px; border: 1px solid var(--border-color); color: var(--text-secondary-opacity); text-transform: uppercase; }
+        .roadmap-tag.highlight { border-color: var(--neon); color: var(--neon); }
+
+        .stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+        .stack-item { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px 16px; border-radius: 12px; transition: border-color 0.2s; }
+        .stack-item:hover { border-color: var(--neon); }
+        .stack-bar-mini { height: 2px; background: var(--border-color); margin-top: 8px; }
+        .stack-bar-mini-fill { height: 100%; background: var(--tech-color, var(--neon)); }
+
+        .mundial-banner { background: rgba(0, 255, 163, 0.05); border: 1px solid var(--neon); padding: 32px; margin-bottom: 80px; border-radius: 24px; display: flex; align-items: center; gap: 40px; }
+        
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 900px) {
+            .platforms-grid { grid-template-columns: repeat(3, 1fr); }
+            .platform-card.featured { grid-column: span 3; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .mundial-banner { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 600px) {
+            .platforms-grid { grid-template-columns: repeat(2, 1fr); }
+            .platform-card.featured { grid-column: span 2; }
+        }
     </style>
+
 </head>
 <body class="font-sans antialiased custom-scrollbar">
 
     <div class="grid-bg"></div>
-
-    <!-- Header -->
+    <!-- Header / Navbar -->
     <header class="fixed top-0 left-0 w-full z-50 border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md">
         <nav class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2 group">
-                <i data-lucide="arrow-left" class="w-4 h-4 text-gray-500 group-hover:text-primary transition-colors"></i>
-                <span class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">FOOTBALL ÓRBITA PRO</span>
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="text-primary italic font-extrabold text-xl tracking-tighter uppercase">10 Plataformas con IA</a>
+            </div>
+
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <a href="index.html#plataformas" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Plataformas</a>
+                <a href="roadmap.html" class="hover:text-primary transition-colors uppercase tracking-widest text-xs font-bold text-primary">Roadmap Full</a>
+                <a href="index.html#precios" class="hover:text-primary transition-colors uppercase tracking-widest text-xs">Precios</a>
+            </div>
 
             <div class="flex items-center gap-4">
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-gray-500">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-gray-500 dark:text-gray-400">
                     <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
                     <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
                 </button>
+
                 <a href="https://ko-fi.com/s/694308f582" target="_blank" class="bg-primary text-black px-6 py-2 rounded-sm font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,255,163,0.3)]">
-                    Obtener Código Pro
+                    Acceso de por vida
                 </a>
             </div>
         </nav>
+        
+        <!-- Marquee / Ticker -->
+        <div class="w-full bg-black/5 dark:bg-white/5 border-t border-black/5 dark:border-white/5 py-2 overflow-hidden">
+            <div class="animate-scroll whitespace-nowrap">
+                <div class="inline-flex items-center gap-8 px-4">
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> FOOTBALL PRO: LIVE</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> CRYPTO AGENT: DEPLOYED</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> REVENUE SHARED: $12K+</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> NEXT DROP: TAROT IA</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> VIBE CODING SESSIONS: 24/7</span>
+                </div>
+                <!-- Duplicate for seamless scroll -->
+                <div class="inline-flex items-center gap-8 px-4">
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> FOOTBALL PRO: LIVE</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> CRYPTO AGENT: DEPLOYED</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> REVENUE SHARED: $12K+</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> NEXT DROP: TAROT IA</span>
+                    <span class="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400"><div class="w-1.5 h-1.5 bg-primary rounded-full"></div> VIBE CODING SESSIONS: 24/7</span>
+                </div>
+            </div>
+        </div>
     </header>
+
 
     <main class="pt-32">
         <!-- Hero Section -->
@@ -524,24 +650,17 @@
             </div>
         </section>
 
-        <!-- Technical Detail (Secondary) -->
-        <section class="max-w-4xl mx-auto px-6 mb-40">
-            <div class="text-center mb-12">
-                <h3 class="text-2xl font-black uppercase tracking-tighter text-gray-500">¿Cómo está construido?</h3>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-700">Para los curiosos técnicos</p>
-            </div>
-            <div class="bg-black/40 p-10 rounded-3xl border border-white/5 font-mono text-xs text-gray-500 leading-relaxed">
-                <div class="flex items-center gap-2 mb-6">
-                    <span class="w-3 h-3 bg-red-500 rounded-full"></span>
-                    <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
-                    <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                </div>
-                <p><span class="text-primary"># Capa 4 Antigravity Activada</span></p>
-                <p>> rails new futorbi_pro --css tailwind --database sqlite3</p>
-                <p>> Antigravity::Director.initialize_orchestration!</p>
-                <p>> Syncing real-time match data (Sofascore API)... <span class="text-primary">[OK]</span></p>
-                <p>> Initializing polymorphic comment engine... <span class="text-primary">[OK]</span></p>
-                <p>> SEO Article Factory: Running agents... <span class="text-primary">[DONE]</span></p>
+        <!-- ROADMAP CTA -->
+        <section class="max-w-7xl mx-auto px-6 mb-40 text-center">
+            <div class="glass-card p-12 rounded-[3rem] border-primary/20 bg-white/5">
+                <h2 class="text-3xl font-black uppercase tracking-tighter mb-6">¿Quieres ver el progreso de las demás apps?</h2>
+                <p class="text-gray-500 mb-10 max-w-xl mx-auto font-light">
+                    Estamos construyendo 10 plataformas en tiempo real. Mira el estado actual, el stack tecnológico y los próximos lanzamientos en nuestro roadmap interactivo.
+                </p>
+                <a href="roadmap.html" class="inline-flex items-center gap-4 bg-primary text-black px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:scale-105 transition-all shadow-[0_20px_40px_rgba(0,255,163,0.2)]">
+                    Ver Roadmap Completo
+                    <i data-lucide="layout-panel" class="w-5 h-5"></i>
+                </a>
             </div>
         </section>
 
@@ -604,6 +723,57 @@
                 1024: { slidesPerView: 3 }
             }
         });
+
+        // Roadmap & Animations Logic
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Animate circles on scroll
+        const circleObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const circles = entry.target.querySelectorAll('.circle-progress[data-pct]');
+                    circles.forEach(circle => {
+                        const r = parseFloat(circle.getAttribute('r'));
+                        const circ = 2 * Math.PI * r;
+                        const pct = parseInt(circle.dataset.pct) / 100;
+                        const offset = circ * (1 - pct);
+                        circle.style.strokeDashoffset = circ;
+                        requestAnimationFrame(() => {
+                            setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+                        });
+                    });
+                    circleObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.platforms-grid').forEach(el => circleObserver.observe(el));
+
+        // Roadmap bars animate on scroll
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.roadmap-bar');
+                    bars.forEach(bar => {
+                        const w = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => { bar.style.width = w; }, 200);
+                    });
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.roadmap').forEach(el => barObserver.observe(el));
     </script>
+
 </body>
 </html>
